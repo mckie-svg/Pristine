@@ -1,0 +1,128 @@
+
+    /* Width of the scrollbar */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    /* Track (the background) */
+    ::-webkit-scrollbar-track {
+        background: #ffffff; /* White background */
+    }
+
+    /* Handle (the moving part) */
+    ::-webkit-scrollbar-thumb {
+        background: #0b3d2b; /* Matches your pristine-green theme */
+        border-radius: 0;   /* Removed rounding if you want it flush, or keep 6px for soft edges */
+        border: none;       /* THIS REMOVES THE GAP */
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #062a1d; /* Slightly darker shade for interaction */
+    }
+
+    /* This removes the arrows/buttons by default */
+    ::-webkit-scrollbar-button {
+        display: none;
+    }
+
+    /* Force the calendar to always stay on top */
+
+
+/* Ensure the calendar doesn't get cut off by the 'relative' container */
+.date-item {
+    overflow: visible !important;
+}
+
+@keyframes infinite-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-infinite-slide {
+  display: flex;
+  width: max-content;
+  animation: infinite-slide 30s linear infinite;
+}
+
+.pause-on-hover:hover .animate-infinite-slide {
+  animation-play-state: paused;
+}
+
+/* Fades the edges of the slider */
+.slider-mask {
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+/* Updated image classes for better visibility */
+.slider-img {
+    filter: grayscale(30%); /* Less gray, more color visible */
+    opacity: 0.85; /* Much clearer by default */
+    transition: all 0.4s ease;
+}
+
+.slider-img:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.05); /* Slight pop on hover */
+}
+
+/* Smoothly transitions the navbar up and down */
+nav {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* This class will be toggled via JavaScript */
+.nav-hidden {
+    transform: translateY(-100%);
+}
+
+/* Hamburger Lines Base Style */
+.hamburger-box {
+    position: relative;
+    width: 30px;
+    height: 24px;
+    margin: 0 auto;
+}
+
+.hamburger-line {
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 9px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: .25s ease-in-out; /* Smooth transition */
+}
+
+.hamburger-line.top { top: 0px; }
+.hamburger-line.middle { top: 10px; }
+.hamburger-line.bottom { top: 20px; }
+
+/* Morph to X when active */
+.menu-open .hamburger-line.top {
+    top: 10px;
+    transform: rotate(135deg);
+}
+
+.menu-open .hamburger-line.middle {
+    opacity: 0;
+    left: -60px;
+}
+
+.menu-open .hamburger-line.bottom {
+    top: 10px;
+    transform: rotate(-135deg);
+}
+
+/* Mobile Link Styles */
+.mobile-link {
+    @apply text-white text-3xl font-light tracking-[0.2em] uppercase transition-all duration-300;
+}
+.mobile-link:hover {
+    @apply text-emerald-400 tracking-[0.3em];
+}

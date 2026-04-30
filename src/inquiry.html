@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inquiry | Pristine Touch Cleaning Service</title>
+    <link rel="shortcut icon" href="../src/img/icon.jpeg" type="image/x-icon">
+     <link rel="stylesheet" href="../style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { pristine: { green: '#0b3d2b' } } } } }
+    </script>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+ <header class="bg-pristine-green py-16 text-center px-6">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" style="font-family: serif;">Start an Inquiry</h1>
+        <p class="text-emerald-200 max-w-xl mx-auto">Take the first step toward a spotless home. Follow our simple process below to get started.</p>
+    </header>
+
+     <section class="max-w-4xl mx-auto px-6 -mt-10 mb-10">
+    <div class="grid md:grid-cols-3 gap-6 text-center">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+            <div class="text-pristine-green text-2xl font-bold mb-2">01</div>
+            <h3 class="font-bold text-sm uppercase tracking-widest mb-1">Contact Info</h3>
+            <p class="text-xs text-stone-500">Provide your basic contact and preference details.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+            <div class="text-pristine-green text-2xl font-bold mb-2">02</div>
+            <h3 class="font-bold text-sm uppercase tracking-widest mb-1">Property Details</h3>
+            <p class="text-xs text-stone-500">Share your location and service requirements.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+            <div class="text-pristine-green text-2xl font-bold mb-2">03</div>
+            <h3 class="font-bold text-sm uppercase tracking-widest mb-1">Schedule & Quote</h3>
+            <p class="text-xs text-stone-500">Pick your preferred time to receive a custom quote.</p>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 container mx-auto px-6 max-w-3xl">
+    <div class="bg-white p-10 rounded-3xl shadow-xl border border-stone-100">
+        <h2 class="text-3xl font-bold mb-2 text-pristine-green">Service Inquiry</h2>
+        <p class="text-stone-600 mb-8">Please provide the details below so we can offer you an accurate quote and check scheduling availability.</p>
+        
+        <form action="#" method="POST" class="space-y-8">
+            
+            <fieldset>
+                <legend class="text-lg font-bold text-stone-900 mb-4 border-b pb-2 w-full">1. Contact Information</legend>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Full Name</label>
+                        <input type="text" placeholder="Juan Dela Cruz" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Phone Number</label>
+                        <input type="tel" placeholder="09XX-XXX-XXXX" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Email Address</label>
+                        <input type="email" placeholder="email@example.com" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Preferred Contact Method</label>
+                        <select class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
+                            <option>Phone Call</option>
+                            <option>SMS / Viber</option>
+                            <option>Email</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+         <fieldset>
+    <legend class="text-lg font-bold text-stone-900 mb-4 border-b pb-2 w-full">2. Property Details</legend>
+    <div class="space-y-4">
+        <div>
+            <label class="block text-sm font-semibold mb-2">Service Address</label>
+            <input type="text" placeholder="Street, Barangay, City, Landmark" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none" required>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-semibold mb-2">Property Type</label>
+                <select class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
+                    <option>Residential (Home/Apartment)</option>
+                    <option>Commercial (Office/Store)</option>
+                    <option>Rental Property</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-2">Approximate Area (sqm)</label>
+                <input type="number" placeholder="e.g. 50" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-2">Special Instructions / Requests</label>
+            <textarea rows="3" placeholder="Any special requests or access instructions for our team?" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none"></textarea>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="mt-10">
+    <legend class="text-xl font-bold text-stone-900 mb-6 border-b border-stone-200 pb-2 w-full">3. Choose Your Schedule</legend>
+    
+    <div id="mini-calendar" class="flex gap-2 overflow-x-auto pb-4 scrollbar-hide"></div>
+
+    <button type="button" id="open-full-calendar" class="mt-4 text-sm font-bold text-pristine-green hover:underline">
+        + View Full Calendar & Future Months
+    </button>
+
+    <div id="selected-date-display" class="mt-6 p-4 rounded-xl hidden items-center justify-between border">
+        <span id="display-date-text" class="text-sm font-bold"></span>
+        <span id="status-icon" class="font-bold"></span>
+    </div>
+</fieldset>
+
+<div id="full-calendar-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 pointer-events-none transition-all duration-300 p-4">
+    <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl scale-95 transition-all duration-300 max-h-[80vh] overflow-y-auto">
+        <h2 class="text-2xl font-bold mb-6">Select Date</h2>
+        <div id="full-grid" class="grid grid-cols-7 gap-2"></div>
+        <button type="button" id="close-modal" class="mt-6 w-full p-4 bg-stone-100 rounded-xl font-bold">Close</button>
+    </div>
+</div>
+
+<script>
+    const miniGrid = document.getElementById('mini-calendar');
+    const fullGrid = document.getElementById('full-grid');
+    const modal = document.getElementById('full-calendar-modal');
+    const displayContainer = document.getElementById('selected-date-display');
+    const displayText = document.getElementById('display-date-text');
+    const statusIcon = document.getElementById('status-icon');
+    
+    const today = new Date();
+    const bookedDates = ['2026-04-27', '2026-04-28'];
+function selectDate(dateStr, formattedDate, isBooked) {
+    // 1. Reset all cells: Remove rings and revert text to dark
+    document.querySelectorAll('.date-cell').forEach(el => {
+        el.classList.remove('ring-4', 'ring-emerald-500', 'ring-rose-500', 'bg-emerald-500', 'bg-rose-500', 'text-white');
+        el.classList.add('bg-white', 'text-stone-900');
+    });
+    
+    // 2. Add Border-Focus to selected cell (The "Inside" Border)
+    const selectedCell = document.getElementById('cell-' + dateStr);
+    
+    // Apply "Inside Border" style: Remove background, keep border heavy
+    selectedCell.classList.remove('bg-white', 'text-stone-900');
+    selectedCell.classList.add(isBooked ? 'ring-4' : 'ring-4', isBooked ? 'ring-rose-500' : 'ring-emerald-500', 'text-stone-900');
+    
+    // 3. Update Display Container (Keep the text white here as requested)
+    displayContainer.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'bg-rose-50', 'border-rose-200', 'bg-emerald-600', 'border-emerald-700', 'bg-rose-600', 'border-rose-700');
+    displayContainer.classList.add('flex');
+
+    if (isBooked) {
+        displayText.textContent = "Sorry, we're out of schedule";
+        displayText.className = "text-sm font-bold text-white"; 
+        statusIcon.textContent = "🚫";
+        displayContainer.classList.add('bg-rose-600', 'border-rose-700');
+    } else {
+        displayText.textContent = "Selected Date: " + formattedDate;
+        displayText.className = "text-sm font-bold text-white"; 
+        statusIcon.textContent = "✓";
+        displayContainer.classList.add('bg-emerald-600', 'border-emerald-700');
+        
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = '';
+    }
+}
+
+    function generateCalendar(daysCount) {
+        for (let i = 0; i < daysCount; i++) {
+            let d = new Date(today);
+            d.setDate(today.getDate() + i);
+            
+            let dateStr = d.toISOString().split('T')[0];
+            let isBooked = bookedDates.includes(dateStr);
+            let day = d.getDate();
+            let month = d.toLocaleString('default', { month: 'short' }).toUpperCase();
+            let fullDateStr = `${month} ${day}, 2026`;
+
+            let html = `<div id="cell-${dateStr}" onclick="selectDate('${dateStr}', '${fullDateStr}', ${isBooked})" 
+                            class="date-cell flex-shrink-0 w-14 h-16 flex flex-col items-center justify-center rounded-2xl border-2 ${isBooked ? 'bg-rose-50 border-rose-100 text-rose-300' : 'bg-white border-stone-200 hover:border-emerald-500 hover:bg-emerald-50'} cursor-pointer transition-all duration-200">
+                            <span class="text-[9px] font-bold opacity-40">${month}</span>
+                            <span class="text-base font-black">${day}</span>
+                        </div>`;
+            
+            if (i < 14) miniGrid.innerHTML += html;
+            fullGrid.innerHTML += html;
+        }
+    }
+
+    generateCalendar(60);
+
+    document.getElementById('open-full-calendar').onclick = () => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.querySelector('div').classList.remove('scale-95');
+        document.body.style.overflow = 'hidden';
+    };
+    
+    document.getElementById('close-modal').onclick = () => {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.querySelector('div').classList.add('scale-95');
+        document.body.style.overflow = '';
+    };
+</script>
+
+    <div class="mb-6">
+        <label class="block text-sm font-semibold mb-4">Preferred Time Window</label>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="time-selection-group">
+            <div class="relative">
+                <input type="checkbox" name="time_slot" id="morning" value="Morning" class="peer hidden time-option">
+                <label for="morning" class="block cursor-pointer p-5 border-2 border-stone-200 rounded-2xl text-center font-bold text-stone-600 peer-checked:border-pristine-green peer-checked:bg-emerald-50 peer-checked:text-pristine-green transition-all duration-300">
+                    Morning <br><span class="text-xs font-normal">8am - 12pm</span>
+                </label>
+            </div>
+            <div class="relative">
+                <input type="checkbox" name="time_slot" id="afternoon" value="Afternoon" class="peer hidden time-option">
+                <label for="afternoon" class="block cursor-pointer p-5 border-2 border-stone-200 rounded-2xl text-center font-bold text-stone-600 peer-checked:border-pristine-green peer-checked:bg-emerald-50 peer-checked:text-pristine-green transition-all duration-300">
+                    Afternoon <br><span class="text-xs font-normal">1pm - 5pm</span>
+                </label>
+            </div>
+            <div class="relative">
+                <input type="checkbox" name="time_slot" id="flexible" value="Flexible" class="peer hidden time-option">
+                <label for="flexible" class="block cursor-pointer p-5 border-2 border-stone-200 rounded-2xl text-center font-bold text-stone-600 peer-checked:border-pristine-green peer-checked:bg-emerald-50 peer-checked:text-pristine-green transition-all duration-300">
+                    Flexible <br><span class="text-xs font-normal">Anytime</span>
+                </label>
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+
+<script>
+    function setupExclusive(containerId, checkboxClass) {
+        const container = document.getElementById(containerId);
+        container.addEventListener('change', (e) => {
+            if (e.target.classList.contains(checkboxClass) && e.target.checked) {
+                // Uncheck everything else in this container
+                container.querySelectorAll('.' + checkboxClass).forEach(input => {
+                    if (input !== e.target) input.checked = false;
+                });
+            }
+        });
+    }
+
+    // Apply to both groups
+    // Note: Give your date/time checkboxes the class "select-option"
+    setupExclusive('date-group', 'peer'); // Adjust class based on your markup
+</script>
+
+<script>
+    const options = document.querySelectorAll('.time-option');
+    options.forEach(option => {
+        option.addEventListener('change', function() {
+            if (this.checked) {
+                // Uncheck all others
+                options.forEach(other => {
+                    if (other !== this) other.checked = false;
+                });
+            }
+        });
+    });
+
+
+    
+</script>
+<script>
+// Initialize Flatpickr
+// Initialize Flatpickr on a dummy element, then force-open it
+const fp = flatpickr("#calendar-trigger", {
+    dateFormat: "M j, Y",
+    disableMobile: true,
+    // Add this to ensure it stays visible
+    position: "auto", 
+    onValueUpdate: function(selectedDates, dateStr) {
+        document.getElementById('date-text').innerText = dateStr;
+        document.getElementById('d4').checked = true;
+        // Uncheck others
+        document.querySelectorAll('.date-option').forEach(opt => {
+            if (opt.id !== 'd4') opt.checked = false;
+        });
+    }
+});
+
+// Force the calendar to open when the label is clicked
+document.getElementById('calendar-trigger').addEventListener('click', function(e) {
+    e.preventDefault();
+    fp.open();
+});
+
+</script>
+
+
+
+
+
+            <button type="submit" class="w-full bg-pristine-green text-white py-4 rounded-xl font-bold hover:bg-emerald-900 transition text-lg">Submit Inquiry</button>
+        </form>
+    </div>
+</section>
+
+<footer class="bg-pristine-green text-stone-200 py-10 text-center">
+    <p class="font-bold">Pristine Touch Cleaning Service</p>
+    <p class="text-sm">Batinguel, Dumaguete City, Negros Oriental 6200</p>
+</footer>
+</body>
+</html>
