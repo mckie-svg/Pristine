@@ -41,6 +41,11 @@
     z-index: 110;
 }
 
+/* Closed drawer must not sit on top of the hamburger (hit-testing / overlap bugs on some mobile browsers) */
+#mobile-menu.translate-x-full {
+    pointer-events: none;
+}
+
 #nav-bar-row.nav-hidden {
     transform: translateY(-100%);
 }

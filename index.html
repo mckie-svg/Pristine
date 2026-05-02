@@ -78,14 +78,14 @@
 
 <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 pointer-events-none">
     <div id="nav-bar-row" class="pointer-events-auto bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50 transition-transform duration-300 ease-out">
-    <div class="container mx-auto flex justify-between items-center px-6 lg:px-12 h-24">
+    <div class="container mx-auto flex justify-between items-center gap-3 px-6 lg:px-12 h-24 min-w-0">
         <!-- Logo -->
-        <a href="index.html" class="flex items-center transition-transform hover:scale-105">
-            <img src="src/img/brand_logo.png" alt="Pristine Touch Logo" class="h-16 w-auto object-contain drop-shadow-md">
+        <a href="index.html" class="flex min-w-0 flex-1 items-center transition-transform hover:scale-105 md:flex-none">
+            <img src="src/img/brand_logo.png" alt="Pristine Touch Logo" class="h-12 w-auto max-h-16 max-w-[min(200px,52vw)] object-contain object-left drop-shadow-md sm:h-16 sm:max-w-[220px]">
         </a>
 
         <!-- Desktop Menu -->
-        <div class="hidden md:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.3em] text-white items-center">
+        <div class="hidden md:flex shrink-0 space-x-10 text-[11px] font-bold uppercase tracking-[0.3em] text-white items-center">
             <a href="index.html" class="hover:text-emerald-400 transition-colors">Home</a>
             <a href="src/services.html" class="hover:text-emerald-400 transition-colors">Services</a>
             <a href="src/inquiry.html" 
@@ -95,7 +95,7 @@
         </div>
 
         <!-- Animated Hamburger Button -->
-        <button id="menu-btn" class="md:hidden relative z-[70] w-10 h-10 text-white focus:outline-none">
+        <button id="menu-btn" type="button" aria-label="Open menu" class="relative z-[70] inline-flex shrink-0 items-center justify-center md:hidden w-11 h-11 min-w-[2.75rem] text-white focus:outline-none touch-manipulation">
             <div class="hamburger-box">
                 <span class="hamburger-line top"></span>
                 <span class="hamburger-line middle"></span>
@@ -114,7 +114,7 @@
 </nav>
 
 <header class="relative w-full h-screen flex items-center overflow-hidden pt-24">
-  <div class="absolute inset-0 -z-10 hero-bg-fade">
+  <div class="absolute inset-0 -z-10 ">
     <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000" class="h-full w-full object-cover">
     <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-emerald-950/40 to-transparent"></div>
   </div>
