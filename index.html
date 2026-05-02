@@ -6,7 +6,6 @@
     <title>Pristine Touch Cleaning Service</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
-  <script src="src/index.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
@@ -15,11 +14,51 @@
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .animate-reveal { animation: fadeInUp 1s ease-out forwards; }
+  .animate-reveal { animation: fadeInUp 1s ease-out forwards; opacity: 0; }
   .delay-300 { animation-delay: 300ms; }
   .delay-600 { animation-delay: 600ms; }
+  .delay-700 { animation-delay: 700ms; }
+
+  #mini-calendar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+#mini-calendar::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, Opera */
+}
+
+.date-card {
+    flex: 0 0 80px; /* Fixed width for the landscape cards */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.date-card.active {
+    background: #064e3b; /* emerald-900 */
+    border-color: #064e3b;
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(6, 78, 59, 0.3);
+}
+
+.date-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f5f5f5;
+}
 </style>
     <link rel="shortcut icon" href="src/img/icon.jpeg" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -35,9 +74,10 @@
         }
     </script>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body class="bg-stone-50 text-stone-800 font-sans antialiased" style="font-family: 'DM Sans', system-ui, sans-serif;">
 
-<nav id="main-nav" class="fixed top-0 left-0 w-full z-50 bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50">
+<nav id="main-nav" class="fixed top-0 left-0 w-full z-50 pointer-events-none">
+    <div id="nav-bar-row" class="pointer-events-auto bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50 transition-transform duration-300 ease-out">
     <div class="container mx-auto flex justify-between items-center px-6 lg:px-12 h-24">
         <!-- Logo -->
         <a href="index.html" class="flex items-center transition-transform hover:scale-105">
@@ -63,19 +103,18 @@
             </div>
         </button>
     </div>
+    </div>
 
-    <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" class="fixed inset-0 bg-emerald-950/95 translate-x-full transition-transform duration-500 z-[60] md:hidden flex flex-col items-center justify-center space-y-10 text-center">
+    <!-- Mobile Menu Overlay: sibling of nav bar so fixed + full viewport works (nav bar uses transform on scroll) -->
+    <div id="mobile-menu" class="pointer-events-auto fixed inset-0 bg-emerald-950/95 backdrop-blur-sm translate-x-full transition-transform duration-500 z-[100] md:hidden flex flex-col items-center justify-center gap-8 sm:gap-10 px-6 text-center pt-24 pb-12 overflow-y-auto">
         <a href="index.html" class="mobile-link">Home</a>
         <a href="src/services.html" class="mobile-link">Services</a>
-        <a href="src/inquiry.html" class="bg-emerald-800 text-white px-12 py-5 rounded-full text-[12px] font-black tracking-[0.3em] uppercase border border-emerald-600 shadow-lg">
-            Contact Us
-        </a>
+        <a href="src/inquiry.html" class="mobile-link">Contact</a>
     </div>
 </nav>
 
 <header class="relative w-full h-screen flex items-center overflow-hidden pt-24">
-  <div class="absolute inset-0 -z-10 animate-fade-in">
+  <div class="absolute inset-0 -z-10 hero-bg-fade">
     <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000" class="h-full w-full object-cover">
     <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-emerald-950/40 to-transparent"></div>
   </div>
@@ -101,8 +140,8 @@
     </div>
   </div>
 </header>
-<section id="about" class="py-24 bg-stone-50 overflow-hidden">
-    <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+<section id="about" class="py-24 bg-gradient-to-b from-stone-50 via-white to-stone-50 overflow-hidden border-t border-stone-200/60">
+    <div class="container mx-auto px-6 lg:px-12 grid md:grid-cols-2 gap-16 items-center">
         
         <!-- Image Side: Slides in from left -->
         <div class="relative group" data-aos="fade-right">
@@ -166,11 +205,12 @@
 </section>
 
 <!-- WHY CHOOSE US / FEATURES SECTION -->
-<section class="py-24 bg-stone-50 overflow-hidden">
+<section class="py-24 bg-stone-100/80 overflow-hidden border-t border-emerald-900/5">
     <div class="container mx-auto px-6 lg:px-12">
         <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+            <p class="text-[10px] font-black tracking-[0.35em] text-emerald-800/70 uppercase mb-4">Why choose us</p>
             <h2 class="text-3xl md:text-5xl font-medium text-stone-900 mb-6" style="font-family: 'Playfair Display', serif;">The Pristine Standard</h2>
-            <p class="text-stone-600">Our customer-driven approach ensures we treat every corner of your home as if it were our own.</p>
+            <p class="text-stone-600 leading-relaxed">Our customer-driven approach ensures we treat every corner of your home as if it were our own.</p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
@@ -217,9 +257,9 @@
         <div>
             <h4 class="text-sm font-bold uppercase tracking-[0.2em] text-white mb-6">Navigation</h4>
             <ul class="space-y-4 text-sm text-emerald-300/80">
-                <li><a href="#" class="hover:text-emerald-400 transition-colors">Home</a></li>
-                <li><a href="#" class="hover:text-emerald-400 transition-colors">Our Services</a></li>
-                <li><a href="#" class="hover:text-emerald-400 transition-colors">Request a Quote</a></li>
+                <li><a href="index.html" class="hover:text-emerald-400 transition-colors">Home</a></li>
+                <li><a href="src/services.html" class="hover:text-emerald-400 transition-colors">Our Services</a></li>
+                <li><a href="src/inquiry.html" class="hover:text-emerald-400 transition-colors">Request a Quote</a></li>
             </ul>
         </div>
 
@@ -281,21 +321,93 @@
     easing: 'ease-out-quart'
   });
 
-let lastScrollY = window.scrollY;
-const nav = document.getElementById('main-nav');
+  document.addEventListener('DOMContentLoaded', () => {
+    const calendar = document.getElementById('mini-calendar');
+    const headerDate = document.getElementById('calendar-header-date');
+    const headerStatus = document.getElementById('calendar-header-status');
+    const scheduleInput = document.getElementById('schedule-input');
 
-window.addEventListener('scroll', () => {
-    const currentScrollY = window.scrollY;
-
-    if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling Down - Hide Navbar
-        nav.classList.add('nav-hidden');
-    } else {
-        // Scrolling Up - Show Navbar
-        nav.classList.remove('nav-hidden');
+    if (!calendar || !headerDate || !headerStatus || !scheduleInput) {
+      return;
     }
 
-    lastScrollY = currentScrollY;
+    const daysToGenerate = 30;
+    const today = new Date();
+
+    // 1. Generate the Dates
+    for (let i = 0; i < daysToGenerate; i++) {
+        const date = new Date();
+        date.setDate(today.getDate() + i);
+
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayNum = date.getDate();
+        const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+        const fullDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+        const dateCard = document.createElement('div');
+        dateCard.className = 'date-card';
+        dateCard.dataset.date = fullDate;
+        dateCard.dataset.display = `${dayName}, ${monthName} ${dayNum}`;
+
+        // Disable Sundays (example logic)
+        if (date.getDay() === 0) {
+            dateCard.classList.add('disabled');
+        }
+
+        dateCard.innerHTML = `
+            <span class="text-[10px] uppercase font-bold opacity-60">${dayName}</span>
+            <span class="text-xl font-black">${dayNum}</span>
+            <span class="text-[10px] uppercase font-bold">${monthName}</span>
+        `;
+
+        dateCard.addEventListener('click', () => {
+            if (dateCard.classList.contains('disabled')) return;
+            selectDate(dateCard);
+        });
+
+        calendar.appendChild(dateCard);
+    }
+
+    // 2. Selection Logic
+    function selectDate(element) {
+        // Remove active class from all
+        document.querySelectorAll('.date-card').forEach(card => card.classList.remove('active'));
+        
+        // Add to selected
+        element.classList.add('active');
+        
+        // Update Header
+        const selectedValue = element.dataset.display;
+        headerDate.innerText = selectedValue;
+        
+        // Update Hidden Input
+        scheduleInput.value = element.dataset.date;
+
+        // Show Status Badge
+        headerStatus.classList.remove('hidden');
+        headerStatus.innerText = "Available";
+        headerStatus.className = "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-emerald-100 text-emerald-700";
+    }
+
+    // 3. Make the landscape calendar draggable by mouse
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    calendar.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - calendar.offsetLeft;
+        scrollLeft = calendar.scrollLeft;
+    });
+    calendar.addEventListener('mouseleave', () => isDown = false);
+    calendar.addEventListener('mouseup', () => isDown = false);
+    calendar.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - calendar.offsetLeft;
+        const walk = (x - startX) * 2;
+        calendar.scrollLeft = scrollLeft - walk;
+    });
 });
 </script>
 

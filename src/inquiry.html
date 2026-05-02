@@ -5,306 +5,796 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inquiry | Pristine Touch Cleaning Service</title>
     <link rel="shortcut icon" href="../src/img/icon.jpeg" type="image/x-icon">
-     <link rel="stylesheet" href="../style.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700;900&display=swap');
+
+        body { font-family: 'Inter', sans-serif; }
+        .serif-font { font-family: 'Playfair Display', serif; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Mini calendar scroll strip */
+        #mini-calendar {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            cursor: grab;
+            user-select: none;
+            scroll-behavior: smooth;
+        }
+        #mini-calendar:active { cursor: grabbing; }
+
+        .date-pill {
+            flex-shrink: 0;
+            width: 64px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            border: 1.5px solid #e7e5e4;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            position: relative;
+        }
+        .date-pill:hover:not(.booked) {
+            border-color: #059669;
+            background: #f0fdf4;
+            transform: translateY(-2px);
+        }
+        .date-pill.selected {
+            background: #0b3d2b;
+            border-color: #0b3d2b;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(11,61,43,0.25);
+        }
+        .date-pill.selected .day-name { color: #6ee7b7; }
+        .date-pill.selected .month-label { color: #a7f3d0; }
+        .date-pill.booked {
+            background: #f5f5f4;
+            border-color: #e7e5e4;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .date-pill.today-pill { border-color: #059669; }
+
+        /* Full landscape modal */
+        #full-calendar-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(11,61,43,0.55);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 20px;
+        }
+        #full-calendar-modal.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-inner {
+            background: #fff;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 860px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+            transform: scale(0.96) translateY(10px);
+            transition: transform 0.25s ease;
+            display: flex;
+            flex-direction: row;
+        }
+        #full-calendar-modal.open .modal-inner {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Left panel of modal */
+        .modal-left {
+            width: 220px;
+            flex-shrink: 0;
+            background: #0b3d2b;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Grid days */
+        .cal-day-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 600;
+            color: #292524;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .cal-day-btn:hover:not(.cal-booked):not(.cal-past) {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+        .cal-day-btn.cal-today {
+            border: 1.5px solid #059669;
+            color: #059669;
+            font-weight: 700;
+        }
+        .cal-day-btn.cal-selected {
+            background: #0b3d2b;
+            color: #fff;
+            border-radius: 10px;
+        }
+        .cal-day-btn.cal-booked {
+            color: #d4d4d4;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        .cal-day-btn.cal-past {
+            color: #d4d4d4;
+            cursor: not-allowed;
+        }
+        .cal-day-btn.cal-in-month-range {
+            background: #f0fdf4;
+        }
+
+        /* Scrollbar for modal body */
+        .modal-right { flex: 1; padding: 28px 28px 24px; overflow-y: auto; max-height: 90vh; }
+
+        /* Trust badges */
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        /* Step indicator */
+        .step-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #0b3d2b;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+    </style>
     <script>
-        tailwind.config = { theme: { extend: { colors: { pristine: { green: '#0b3d2b' } } } } }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pristine: { green: '#0b3d2b' }
+                    }
+                }
+            }
+        }
     </script>
 </head>
 <body class="bg-stone-50 text-stone-800">
 
- <header class="bg-pristine-green py-16 text-center px-6">
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" style="font-family: serif;">Start an Inquiry</h1>
-        <p class="text-emerald-200 max-w-xl mx-auto">Take the first step toward a spotless home. Follow our simple process below to get started.</p>
-    </header>
+<!-- HEADER -->
+<header class="bg-pristine-green py-20 text-center px-6 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 20% 50%, #2ecc71 0%, transparent 50%), radial-gradient(circle at 80% 20%, #16a34a 0%, transparent 40%);"></div>
+    <div class="relative z-10">
+        <p class="text-emerald-400 font-bold tracking-[0.3em] uppercase text-xs mb-4">Book a Service</p>
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 serif-font">Start an Inquiry</h1>
+        <p class="text-emerald-200 max-w-lg mx-auto text-base leading-relaxed">Tell us about your space. We'll craft a custom plan and get back to you within 24 hours.</p>
 
-     <section class="max-w-4xl mx-auto px-6 -mt-10 mb-10">
-    <div class="grid md:grid-cols-3 gap-6 text-center">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-            <div class="text-pristine-green text-2xl font-bold mb-2">01</div>
-            <h3 class="font-bold text-sm uppercase tracking-widest mb-1">Contact Info</h3>
-            <p class="text-xs text-stone-500">Provide your basic contact and preference details.</p>
+        <!-- Quick trust row -->
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <div class="flex items-center gap-2 bg-white/10 text-emerald-100 text-xs font-semibold px-4 py-2 rounded-full border border-white/20">
+                <svg class="w-3.5 h-3.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                No Commitment Required
+            </div>
+            <div class="flex items-center gap-2 bg-white/10 text-emerald-100 text-xs font-semibold px-4 py-2 rounded-full border border-white/20">
+                <svg class="w-3.5 h-3.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                Free Custom Quote
+            </div>
+            <div class="flex items-center gap-2 bg-white/10 text-emerald-100 text-xs font-semibold px-4 py-2 rounded-full border border-white/20">
+                <svg class="w-3.5 h-3.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                Reply Within 24hrs
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-            <div class="text-pristine-green text-2xl font-bold mb-2">02</div>
-            <h3 class="font-bold text-sm uppercase tracking-widest mb-1">Property Details</h3>
-            <p class="text-xs text-stone-500">Share your location and service requirements.</p>
+    </div>
+</header>
+
+<!-- STEP CARDS -->
+<section class="max-w-4xl mx-auto px-6 -mt-8 mb-12 relative z-10">
+    <div class="grid md:grid-cols-3 gap-4">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-4">
+            <div class="step-num">01</div>
+            <div>
+                <h3 class="font-bold text-sm uppercase tracking-wider mb-1 text-stone-800">Contact Info</h3>
+                <p class="text-xs text-stone-500 leading-relaxed">Your name, number, and how you'd like us to reach you.</p>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-            <div class="text-pristine-green text-2xl font-bold mb-2">03</div>
-            <h3 class="font-bold text-sm uppercase tracking-widest mb-1">Schedule & Quote</h3>
-            <p class="text-xs text-stone-500">Pick your preferred time to receive a custom quote.</p>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-4">
+            <div class="step-num">02</div>
+            <div>
+                <h3 class="font-bold text-sm uppercase tracking-wider mb-1 text-stone-800">Property Details</h3>
+                <p class="text-xs text-stone-500 leading-relaxed">Location, size, and any special requirements for our team.</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-4">
+            <div class="step-num">03</div>
+            <div>
+                <h3 class="font-bold text-sm uppercase tracking-wider mb-1 text-stone-800">Schedule & Quote</h3>
+                <p class="text-xs text-stone-500 leading-relaxed">Choose a preferred date and we'll send your custom quote.</p>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="py-20 container mx-auto px-6 max-w-3xl">
-    <div class="bg-white p-10 rounded-3xl shadow-xl border border-stone-100">
-        <h2 class="text-3xl font-bold mb-2 text-pristine-green">Service Inquiry</h2>
-        <p class="text-stone-600 mb-8">Please provide the details below so we can offer you an accurate quote and check scheduling availability.</p>
-        
-        <form action="#" method="POST" class="space-y-8">
-            
-            <fieldset>
-                <legend class="text-lg font-bold text-stone-900 mb-4 border-b pb-2 w-full">1. Contact Information</legend>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Full Name</label>
-                        <input type="text" placeholder="Juan Dela Cruz" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none" required>
+<!-- MAIN FORM + SIDEBAR -->
+<section class="py-4 pb-16 container mx-auto px-6 max-w-6xl">
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+
+        <!-- FORM -->
+        <div class="flex-1 bg-white p-6 md:p-10 rounded-3xl shadow-lg border border-stone-100">
+            <h2 class="text-3xl font-bold mb-1 text-pristine-green serif-font">Service Inquiry</h2>
+            <p class="text-stone-500 mb-8 text-sm">All fields marked with <span class="text-red-400">*</span> are required. We'll follow up with a tailored quote within 24 hours.</p>
+
+            <form action="#" method="POST" class="space-y-10">
+
+                <!-- SECTION 1: Contact -->
+                <fieldset>
+                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
+                        <span class="step-num text-sm">01</span>
+                        <span class="text-base font-bold text-stone-800">Contact Information</span>
+                    </legend>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Full Name <span class="text-red-400">*</span></label>
+                            <input type="text" placeholder="Juan Dela Cruz" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Phone Number <span class="text-red-400">*</span></label>
+                            <input type="tel" placeholder="09XX-XXX-XXXX" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Email Address</label>
+                            <input type="email" placeholder="email@example.com" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Preferred Contact Method</label>
+                            <select class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition cursor-pointer text-sm text-stone-700">
+                                <option>Phone Call</option>
+                                <option>SMS / Viber</option>
+                                <option>Email</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Phone Number</label>
-                        <input type="tel" placeholder="09XX-XXX-XXXX" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none" required>
+                </fieldset>
+
+                <!-- SECTION 2: Service Type -->
+                <fieldset>
+                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
+                        <span class="step-num text-sm">02</span>
+                        <span class="text-base font-bold text-stone-800">Service Type</span>
+                    </legend>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="service_type" value="Basic" class="peer hidden" required>
+                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="text-2xl mb-2"></div>
+                                <p class="text-xs font-bold text-stone-700">Basic</p>
+                                <p class="text-[10px] text-stone-400 mt-0.5">Sweep, Mop, Dust</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="service_type" value="Deep" class="peer hidden">
+                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="text-2xl mb-2"></div>
+                                <p class="text-xs font-bold text-stone-700">Deep Clean</p>
+                                <p class="text-[10px] text-stone-400 mt-0.5">Scrub, Sanitize</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="service_type" value="Move" class="peer hidden">
+                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="text-2xl mb-2"></div>
+                                <p class="text-xs font-bold text-stone-700">Move In/Out</p>
+                                <p class="text-[10px] text-stone-400 mt-0.5">Full Refresh</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="service_type" value="Commercial" class="peer hidden">
+                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="text-2xl mb-2"></div>
+                                <p class="text-xs font-bold text-stone-700">Commercial</p>
+                                <p class="text-[10px] text-stone-400 mt-0.5">Office / Store</p>
+                            </div>
+                        </label>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Email Address</label>
-                        <input type="email" placeholder="email@example.com" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
+                </fieldset>
+
+                <!-- SECTION 3: Property -->
+                <fieldset>
+                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
+                        <span class="step-num text-sm">03</span>
+                        <span class="text-base font-bold text-stone-800">Property Details</span>
+                    </legend>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Service Address <span class="text-red-400">*</span></label>
+                            <input type="text" placeholder="Street, Barangay, City, Landmark" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm" required>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Property Type</label>
+                                <select class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition cursor-pointer text-sm text-stone-700">
+                                    <option>Residential</option>
+                                    <option>Commercial</option>
+                                    <option>Rental Property</option>
+                                    <option>Clinic / Hospital</option>
+                                    <option>Hotel / Lodging</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Approx. Area (sqm)</label>
+                                <input type="number" placeholder="e.g. 50" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">No. of Rooms</label>
+                                <input type="number" placeholder="e.g. 3" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Special Instructions</label>
+                            <textarea rows="3" placeholder="e.g. pets on site, gate code, specific areas to focus on..." class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm resize-none"></textarea>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Preferred Contact Method</label>
-                        <select class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
-                            <option>Phone Call</option>
-                            <option>SMS / Viber</option>
-                            <option>Email</option>
-                        </select>
+                </fieldset>
+
+                <!-- SECTION 4: Schedule -->
+                <fieldset>
+                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
+                        <span class="step-num text-sm">04</span>
+                        <span class="text-base font-bold text-stone-800">Preferred Schedule</span>
+                    </legend>
+
+                    <!-- Selected date display -->
+                    <div id="calendar-header" class="mb-5 flex items-center justify-between bg-stone-50 px-5 py-4 rounded-2xl border border-stone-200">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-black mb-0.5">Selected Date</p>
+                            <h3 id="calendar-header-date" class="text-base font-bold text-stone-400 italic">No date selected yet</h3>
+                        </div>
+                        <span id="date-badge" class="hidden px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 uppercase tracking-wide">Available</span>
                     </div>
+
+                    <!-- Mini calendar strip -->
+                    <div class="mb-1">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">Next 14 Days — scroll to browse</p>
+                        <div id="mini-calendar" class="no-scrollbar"></div>
+                    </div>
+
+                    <!-- Legend + button row -->
+                    <div class="flex justify-between items-center mt-4 mb-8">
+                        <button type="button" id="open-full-calendar" class="flex items-center gap-2 text-sm font-bold text-emerald-700 hover:text-emerald-900 transition bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-full border border-emerald-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            View Full Calendar (60 days)
+                        </button>
+                        <div class="flex gap-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Available</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-stone-300 inline-block"></span> Booked</span>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="selected_date" id="schedule-input" required>
+
+                    <!-- Time window -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Preferred Time Window</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="time_slot" value="Morning" class="peer hidden" required>
+                                <div class="p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="block text-xl mb-1"></span>
+                                    <span class="block font-bold text-stone-700 text-sm">Morning</span>
+                                    <span class="text-xs text-stone-400">8:00 AM – 12:00 PM</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="time_slot" value="Afternoon" class="peer hidden">
+                                <div class="p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="block text-xl mb-1"></span>
+                                    <span class="block font-bold text-stone-700 text-sm">Afternoon</span>
+                                    <span class="text-xs text-stone-400">1:00 PM – 5:00 PM</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="time_slot" value="Flexible" class="peer hidden">
+                                <div class="p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="block text-xl mb-1"></span>
+                                    <span class="block font-bold text-stone-700 text-sm">Flexible</span>
+                                    <span class="text-xs text-stone-400">Anytime works</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="w-full bg-pristine-green text-white py-5 rounded-2xl font-bold hover:bg-emerald-900 transition-all text-base shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                    Submit Inquiry
+                </button>
+
+                <p class="text-center text-xs text-stone-400">By submitting, you agree to be contacted by our team. We do not share your information with third parties.</p>
+            </form>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="lg:w-72 flex flex-col gap-5 sticky top-24">
+
+            <!-- What to expect -->
+            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
+                <h3 class="font-bold text-stone-800 text-sm uppercase tracking-wider mb-4">What Happens Next</h3>
+                <ul class="space-y-4">
+                    <li class="flex gap-3 items-start">
+                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5">1</div>
+                        <p class="text-xs text-stone-600 leading-relaxed">We receive your inquiry and review your details within a few hours.</p>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5">2</div>
+                        <p class="text-xs text-stone-600 leading-relaxed">Our team prepares a custom quote based on your space and service type.</p>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5">3</div>
+                        <p class="text-xs text-stone-600 leading-relaxed">We reach out via your preferred contact method to confirm the booking.</p>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5">4</div>
+                        <p class="text-xs text-stone-600 leading-relaxed">Our certified cleaners arrive on your scheduled date — ready to work.</p>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 space-y-3">
+                <h3 class="font-bold text-stone-800 text-sm uppercase tracking-wider mb-2">Our Commitment</h3>
+                <div class="trust-badge">
+                    <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    Fully Insured & Bonded
                 </div>
-            </fieldset>
-
-         <fieldset>
-    <legend class="text-lg font-bold text-stone-900 mb-4 border-b pb-2 w-full">2. Property Details</legend>
-    <div class="space-y-4">
-        <div>
-            <label class="block text-sm font-semibold mb-2">Service Address</label>
-            <input type="text" placeholder="Street, Barangay, City, Landmark" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none" required>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-6">
-            <div>
-                <label class="block text-sm font-semibold mb-2">Property Type</label>
-                <select class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
-                    <option>Residential (Home/Apartment)</option>
-                    <option>Commercial (Office/Store)</option>
-                    <option>Rental Property</option>
-                </select>
+                <div class="trust-badge">
+                    <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                    Background-Checked Staff
+                </div>
+                <div class="trust-badge">
+                    <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/><path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/></svg>
+                    Eco-Safe Products Only
+                </div>
+                <div class="trust-badge">
+                    <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    100% Satisfaction Guarantee
+                </div>
             </div>
-            <div>
-                <label class="block text-sm font-semibold mb-2">Approximate Area (sqm)</label>
-                <input type="number" placeholder="e.g. 50" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none">
+
+            <!-- Contact block -->
+            <div class="bg-pristine-green rounded-2xl p-6 text-white">
+                <p class="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Prefer to talk directly?</p>
+                <h3 class="font-bold text-lg mb-3 serif-font">Reach us anytime</h3>
+                <a href="tel:+639000000000" class="flex items-center gap-2 text-sm text-emerald-200 hover:text-white transition mb-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+                    +63 900 000 0000
+                </a>
+                <a href="mailto:hello@pristinetouch.ph" class="flex items-center gap-2 text-sm text-emerald-200 hover:text-white transition">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+                    hello@pristinetouch.ph
+                </a>
+                <div class="mt-4 pt-4 border-t border-emerald-800 text-xs text-emerald-400">
+                    Mon – Sat &nbsp;·&nbsp; 8:00 AM – 6:00 PM
+                </div>
             </div>
         </div>
 
-        <div>
-            <label class="block text-sm font-semibold mb-2">Special Instructions / Requests</label>
-            <textarea rows="3" placeholder="Any special requests or access instructions for our team?" class="w-full p-4 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none"></textarea>
+    </div>
+</section>
+
+
+<!-- ===== LANDSCAPE MODAL CALENDAR ===== -->
+<div id="full-calendar-modal">
+    <div class="modal-inner">
+
+        <!-- LEFT PANEL -->
+        <div class="modal-left">
+            <div>
+                <p class="text-emerald-400 text-[10px] font-black uppercase tracking-[0.25em] mb-1">Pristine Touch</p>
+                <h2 class="text-white text-xl font-bold serif-font leading-tight">Pick Your Date</h2>
+                <p class="text-emerald-300 text-xs mt-2 leading-relaxed">60-day booking window. Booked slots are crossed out.</p>
+            </div>
+
+            <!-- Selected summary -->
+            <div id="modal-selected-summary" class="bg-emerald-900/60 rounded-xl p-4">
+                <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-1">Selected</p>
+                <p id="modal-selected-text" class="text-white text-sm font-bold">—</p>
+            </div>
+
+            <!-- Month jump buttons -->
+            <div>
+                <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-2">Jump to Month</p>
+                <div id="month-jump-list" class="space-y-1"></div>
+            </div>
+
+            <!-- Legend -->
+            <div class="mt-auto space-y-2">
+                <div class="flex items-center gap-2 text-xs text-emerald-200">
+                    <span class="w-4 h-4 rounded-md bg-emerald-800 flex items-center justify-center">
+                        <svg class="w-2.5 h-2.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    </span>
+                    Selected date
+                </div>
+                <div class="flex items-center gap-2 text-xs text-emerald-200">
+                    <span class="w-4 h-4 rounded-md border border-emerald-400 bg-transparent"></span>
+                    Today
+                </div>
+                <div class="flex items-center gap-2 text-xs text-emerald-200">
+                    <span class="w-4 h-4 rounded-md bg-emerald-900/40 text-stone-500 flex items-center justify-center text-[9px] line-through">12</span>
+                    Booked
+                </div>
+            </div>
+
+            <button type="button" id="close-modal" class="w-full py-2.5 bg-emerald-900 hover:bg-emerald-800 text-emerald-200 text-sm font-bold rounded-xl transition">Close</button>
         </div>
-    </div>
-</fieldset>
 
-<fieldset class="mt-10">
-    <legend class="text-xl font-bold text-stone-900 mb-6 border-b border-stone-200 pb-2 w-full">3. Choose Your Schedule</legend>
-    
-    <div id="mini-calendar" class="flex gap-2 overflow-x-auto pb-4 scrollbar-hide"></div>
+        <!-- RIGHT PANEL: scrollable month grids -->
+        <div class="modal-right" id="modal-right-panel">
+            <div id="full-grid-container"></div>
+        </div>
 
-    <button type="button" id="open-full-calendar" class="mt-4 text-sm font-bold text-pristine-green hover:underline">
-        + View Full Calendar & Future Months
-    </button>
-
-    <div id="selected-date-display" class="mt-6 p-4 rounded-xl hidden items-center justify-between border">
-        <span id="display-date-text" class="text-sm font-bold"></span>
-        <span id="status-icon" class="font-bold"></span>
-    </div>
-</fieldset>
-
-<div id="full-calendar-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 opacity-0 pointer-events-none transition-all duration-300 p-4">
-    <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl scale-95 transition-all duration-300 max-h-[80vh] overflow-y-auto">
-        <h2 class="text-2xl font-bold mb-6">Select Date</h2>
-        <div id="full-grid" class="grid grid-cols-7 gap-2"></div>
-        <button type="button" id="close-modal" class="mt-6 w-full p-4 bg-stone-100 rounded-xl font-bold">Close</button>
     </div>
 </div>
 
-<script>
-    const miniGrid = document.getElementById('mini-calendar');
-    const fullGrid = document.getElementById('full-grid');
-    const modal = document.getElementById('full-calendar-modal');
-    const displayContainer = document.getElementById('selected-date-display');
-    const displayText = document.getElementById('display-date-text');
-    const statusIcon = document.getElementById('status-icon');
-    
-    const today = new Date();
-    const bookedDates = ['2026-04-27', '2026-04-28'];
-function selectDate(dateStr, formattedDate, isBooked) {
-    // 1. Reset all cells: Remove rings and revert text to dark
-    document.querySelectorAll('.date-cell').forEach(el => {
-        el.classList.remove('ring-4', 'ring-emerald-500', 'ring-rose-500', 'bg-emerald-500', 'bg-rose-500', 'text-white');
-        el.classList.add('bg-white', 'text-stone-900');
-    });
-    
-    // 2. Add Border-Focus to selected cell (The "Inside" Border)
-    const selectedCell = document.getElementById('cell-' + dateStr);
-    
-    // Apply "Inside Border" style: Remove background, keep border heavy
-    selectedCell.classList.remove('bg-white', 'text-stone-900');
-    selectedCell.classList.add(isBooked ? 'ring-4' : 'ring-4', isBooked ? 'ring-rose-500' : 'ring-emerald-500', 'text-stone-900');
-    
-    // 3. Update Display Container (Keep the text white here as requested)
-    displayContainer.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'bg-rose-50', 'border-rose-200', 'bg-emerald-600', 'border-emerald-700', 'bg-rose-600', 'border-rose-700');
-    displayContainer.classList.add('flex');
-
-    if (isBooked) {
-        displayText.textContent = "Sorry, we're out of schedule";
-        displayText.className = "text-sm font-bold text-white"; 
-        statusIcon.textContent = "🚫";
-        displayContainer.classList.add('bg-rose-600', 'border-rose-700');
-    } else {
-        displayText.textContent = "Selected Date: " + formattedDate;
-        displayText.className = "text-sm font-bold text-white"; 
-        statusIcon.textContent = "✓";
-        displayContainer.classList.add('bg-emerald-600', 'border-emerald-700');
-        
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        document.body.style.overflow = '';
-    }
-}
-
-    function generateCalendar(daysCount) {
-        for (let i = 0; i < daysCount; i++) {
-            let d = new Date(today);
-            d.setDate(today.getDate() + i);
-            
-            let dateStr = d.toISOString().split('T')[0];
-            let isBooked = bookedDates.includes(dateStr);
-            let day = d.getDate();
-            let month = d.toLocaleString('default', { month: 'short' }).toUpperCase();
-            let fullDateStr = `${month} ${day}, 2026`;
-
-            let html = `<div id="cell-${dateStr}" onclick="selectDate('${dateStr}', '${fullDateStr}', ${isBooked})" 
-                            class="date-cell flex-shrink-0 w-14 h-16 flex flex-col items-center justify-center rounded-2xl border-2 ${isBooked ? 'bg-rose-50 border-rose-100 text-rose-300' : 'bg-white border-stone-200 hover:border-emerald-500 hover:bg-emerald-50'} cursor-pointer transition-all duration-200">
-                            <span class="text-[9px] font-bold opacity-40">${month}</span>
-                            <span class="text-base font-black">${day}</span>
-                        </div>`;
-            
-            if (i < 14) miniGrid.innerHTML += html;
-            fullGrid.innerHTML += html;
-        }
-    }
-
-    generateCalendar(60);
-
-    document.getElementById('open-full-calendar').onclick = () => {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        modal.querySelector('div').classList.remove('scale-95');
-        document.body.style.overflow = 'hidden';
-    };
-    
-    document.getElementById('close-modal').onclick = () => {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        modal.querySelector('div').classList.add('scale-95');
-        document.body.style.overflow = '';
-    };
-</script>
-
-    <div class="mb-6">
-        <label class="block text-sm font-semibold mb-4">Preferred Time Window</label>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="time-selection-group">
-            <div class="relative">
-                <input type="checkbox" name="time_slot" id="morning" value="Morning" class="peer hidden time-option">
-                <label for="morning" class="block cursor-pointer p-5 border-2 border-stone-200 rounded-2xl text-center font-bold text-stone-600 peer-checked:border-pristine-green peer-checked:bg-emerald-50 peer-checked:text-pristine-green transition-all duration-300">
-                    Morning <br><span class="text-xs font-normal">8am - 12pm</span>
-                </label>
-            </div>
-            <div class="relative">
-                <input type="checkbox" name="time_slot" id="afternoon" value="Afternoon" class="peer hidden time-option">
-                <label for="afternoon" class="block cursor-pointer p-5 border-2 border-stone-200 rounded-2xl text-center font-bold text-stone-600 peer-checked:border-pristine-green peer-checked:bg-emerald-50 peer-checked:text-pristine-green transition-all duration-300">
-                    Afternoon <br><span class="text-xs font-normal">1pm - 5pm</span>
-                </label>
-            </div>
-            <div class="relative">
-                <input type="checkbox" name="time_slot" id="flexible" value="Flexible" class="peer hidden time-option">
-                <label for="flexible" class="block cursor-pointer p-5 border-2 border-stone-200 rounded-2xl text-center font-bold text-stone-600 peer-checked:border-pristine-green peer-checked:bg-emerald-50 peer-checked:text-pristine-green transition-all duration-300">
-                    Flexible <br><span class="text-xs font-normal">Anytime</span>
-                </label>
-            </div>
-        </div>
-    </div>
-</fieldset>
-
-
-<script>
-    function setupExclusive(containerId, checkboxClass) {
-        const container = document.getElementById(containerId);
-        container.addEventListener('change', (e) => {
-            if (e.target.classList.contains(checkboxClass) && e.target.checked) {
-                // Uncheck everything else in this container
-                container.querySelectorAll('.' + checkboxClass).forEach(input => {
-                    if (input !== e.target) input.checked = false;
-                });
-            }
-        });
-    }
-
-    // Apply to both groups
-    // Note: Give your date/time checkboxes the class "select-option"
-    setupExclusive('date-group', 'peer'); // Adjust class based on your markup
-</script>
-
-<script>
-    const options = document.querySelectorAll('.time-option');
-    options.forEach(option => {
-        option.addEventListener('change', function() {
-            if (this.checked) {
-                // Uncheck all others
-                options.forEach(other => {
-                    if (other !== this) other.checked = false;
-                });
-            }
-        });
-    });
-
-
-    
-</script>
-<script>
-// Initialize Flatpickr
-// Initialize Flatpickr on a dummy element, then force-open it
-const fp = flatpickr("#calendar-trigger", {
-    dateFormat: "M j, Y",
-    disableMobile: true,
-    // Add this to ensure it stays visible
-    position: "auto", 
-    onValueUpdate: function(selectedDates, dateStr) {
-        document.getElementById('date-text').innerText = dateStr;
-        document.getElementById('d4').checked = true;
-        // Uncheck others
-        document.querySelectorAll('.date-option').forEach(opt => {
-            if (opt.id !== 'd4') opt.checked = false;
-        });
-    }
-});
-
-// Force the calendar to open when the label is clicked
-document.getElementById('calendar-trigger').addEventListener('click', function(e) {
-    e.preventDefault();
-    fp.open();
-});
-
-</script>
-
-
-
-
-
-            <button type="submit" class="w-full bg-pristine-green text-white py-4 rounded-xl font-bold hover:bg-emerald-900 transition text-lg">Submit Inquiry</button>
-        </form>
-    </div>
-</section>
-
-<footer class="bg-pristine-green text-stone-200 py-10 text-center">
-    <p class="font-bold">Pristine Touch Cleaning Service</p>
+<footer class="bg-pristine-green text-stone-400 py-12 text-center">
+    <p class="font-bold text-white mb-1">Pristine Touch Cleaning Service</p>
     <p class="text-sm">Batinguel, Dumaguete City, Negros Oriental 6200</p>
 </footer>
+
+<script>
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    // Simulate some booked dates
+    const bookedDates = new Set();
+    [3,7,10,15,18,22,28,33,40,45,50].forEach(offset => {
+        const d = new Date(today);
+        d.setDate(today.getDate() + offset);
+        bookedDates.add(d.toISOString().split('T')[0]);
+    });
+
+    let selectedDateStr = '';
+
+    function fmtDateStr(d) {
+        return d.toISOString().split('T')[0];
+    }
+    function fmtLong(d) {
+        return d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    }
+    function fmtMonthYear(d) {
+        return d.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    }
+
+    // ---- MINI CALENDAR (14 days) ----
+    function buildMiniCalendar() {
+        const wrap = document.getElementById('mini-calendar');
+        wrap.innerHTML = '';
+        for (let i = 0; i < 14; i++) {
+            const d = new Date(today);
+            d.setDate(today.getDate() + i);
+            const ds = fmtDateStr(d);
+            const booked = bookedDates.has(ds);
+            const isToday = i === 0;
+
+            const pill = document.createElement('div');
+            pill.className = 'date-pill' + (booked ? ' booked' : '') + (isToday ? ' today-pill' : '');
+            pill.dataset.date = ds;
+            pill.innerHTML = `
+                <span class="day-name" style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:${booked?'#d4d4d4':'#059669'};margin-bottom:2px;">${d.toLocaleString('default',{weekday:'short'}).toUpperCase()}</span>
+                <span style="font-size:22px;font-weight:900;line-height:1;color:${booked?'#d4d4d4':'#1c1917'};">${d.getDate()}</span>
+                <span class="month-label" style="font-size:9px;font-weight:700;opacity:0.5;text-transform:uppercase;margin-top:2px;">${d.toLocaleString('default',{month:'short'})}</span>
+            `;
+            if (!booked) {
+                pill.onclick = () => selectDate(ds, fmtLong(d));
+            }
+            wrap.appendChild(pill);
+        }
+        // drag-to-scroll
+        let isDown = false, startX, scrollLeft;
+        wrap.addEventListener('mousedown', e => { isDown=true; startX=e.pageX-wrap.offsetLeft; scrollLeft=wrap.scrollLeft; });
+        wrap.addEventListener('mouseleave', () => isDown=false);
+        wrap.addEventListener('mouseup', () => isDown=false);
+        wrap.addEventListener('mousemove', e => { if(!isDown) return; e.preventDefault(); wrap.scrollLeft = scrollLeft-(e.pageX-wrap.offsetLeft-startX); });
+    }
+
+    function selectDate(ds, label) {
+        selectedDateStr = ds;
+        document.getElementById('schedule-input').value = ds;
+
+        // Update header
+        const hd = document.getElementById('calendar-header-date');
+        hd.textContent = label;
+        hd.classList.remove('text-stone-400','italic');
+        hd.classList.add('text-pristine-green');
+        const badge = document.getElementById('date-badge');
+        badge.classList.remove('hidden');
+
+        // Mini pill highlight
+        document.querySelectorAll('.date-pill').forEach(p => {
+            p.classList.remove('selected');
+            if (p.dataset.date === ds) p.classList.add('selected');
+        });
+
+        // Modal selected text
+        document.getElementById('modal-selected-text').textContent = label;
+
+        // Grid highlight
+        document.querySelectorAll('.cal-day-btn').forEach(b => {
+            b.classList.remove('cal-selected');
+            if (b.dataset.date === ds) b.classList.add('cal-selected');
+        });
+
+        closeModal();
+    }
+
+    // ---- FULL MODAL CALENDAR ----
+    function buildFullCalendar() {
+        const container = document.getElementById('full-grid-container');
+        const jumpList = document.getElementById('month-jump-list');
+        container.innerHTML = '';
+        jumpList.innerHTML = '';
+
+        const months = [];
+        let cur = new Date(today.getFullYear(), today.getMonth(), 1);
+        const end = new Date(today);
+        end.setDate(end.getDate() + 60);
+
+        while (cur <= end) {
+            months.push(new Date(cur));
+            cur.setMonth(cur.getMonth()+1);
+        }
+
+        months.forEach((monthStart, mi) => {
+            const monthId = 'month-' + mi;
+            const monthName = fmtMonthYear(monthStart);
+
+            // Jump button
+            const jBtn = document.createElement('button');
+            jBtn.type = 'button';
+            jBtn.textContent = monthStart.toLocaleString('default',{month:'long'});
+            jBtn.className = 'w-full text-left text-xs font-bold text-emerald-200 hover:text-white px-3 py-1.5 rounded-lg hover:bg-emerald-800/60 transition';
+            jBtn.onclick = () => {
+                document.getElementById(monthId).scrollIntoView({behavior:'smooth', block:'start'});
+            };
+            jumpList.appendChild(jBtn);
+
+            // Month block
+            const block = document.createElement('div');
+            block.id = monthId;
+            block.style.marginBottom = '28px';
+
+            // Month header
+            const mhdr = document.createElement('div');
+            mhdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1.5px solid #f0fdf4;';
+            mhdr.innerHTML = `
+                <span style="font-size:16px;font-weight:700;color:#1c1917;">${monthName}</span>
+                <span style="font-size:11px;font-weight:600;color:#a78bfa;background:#f5f3ff;padding:2px 10px;border-radius:20px;">
+                    ${getDaysInMonth(monthStart, end)} bookable days
+                </span>
+            `;
+            block.appendChild(mhdr);
+
+            // Day labels
+            const dayRow = document.createElement('div');
+            dayRow.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;';
+            ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+                const span = document.createElement('div');
+                span.textContent = d;
+                span.style.cssText = 'text-align:center;font-size:10px;font-weight:700;color:#a8a29e;padding:4px 0;';
+                dayRow.appendChild(span);
+            });
+            block.appendChild(dayRow);
+
+            // Day grid
+            const grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);gap:4px;';
+
+            const firstDay = monthStart.getDay();
+            for (let p = 0; p < firstDay; p++) {
+                grid.appendChild(Object.assign(document.createElement('div'), {style:'height:36px;'}));
+            }
+
+            const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth()+1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const d = new Date(monthStart.getFullYear(), monthStart.getMonth(), day);
+                const ds = fmtDateStr(d);
+                const isPast = d < today;
+                const isBooked = bookedDates.has(ds);
+                const isTday = ds === fmtDateStr(today);
+                const isSelected = ds === selectedDateStr;
+                const isBeyond = d > end;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.dataset.date = ds;
+                btn.textContent = day;
+
+                let cls = 'cal-day-btn';
+                if (isPast || isBeyond) cls += ' cal-past';
+                else if (isBooked) cls += ' cal-booked';
+                else if (isTday) cls += ' cal-today';
+                if (isSelected) cls += ' cal-selected';
+
+                btn.className = cls;
+
+                if (!isPast && !isBooked && !isBeyond) {
+                    btn.onclick = () => selectDate(ds, fmtLong(d));
+                }
+
+                grid.appendChild(btn);
+            }
+            block.appendChild(grid);
+            container.appendChild(block);
+        });
+    }
+
+    function getDaysInMonth(monthStart, endDate) {
+        let count = 0;
+        const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth()+1, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const d = new Date(monthStart.getFullYear(), monthStart.getMonth(), day);
+            if (d >= today && d <= endDate && !bookedDates.has(fmtDateStr(d))) count++;
+        }
+        return count;
+    }
+
+    function openModal() {
+        buildFullCalendar();
+        const modal = document.getElementById('full-calendar-modal');
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('full-calendar-modal').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('open-full-calendar').onclick = openModal;
+    document.getElementById('close-modal').onclick = closeModal;
+    document.getElementById('full-calendar-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    buildMiniCalendar();
+</script>
 </body>
 </html>

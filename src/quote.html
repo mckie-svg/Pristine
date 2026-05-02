@@ -13,7 +13,45 @@
 </head>
 <body class="bg-stone-50 text-stone-800">
 
-    <header class="bg-pristine-green py-16 text-center px-6">
+    <!-- NAV: same structure / classes as index.html & services.html -->
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 pointer-events-none">
+        <div id="nav-bar-row" class="pointer-events-auto bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50 transition-transform duration-300 ease-out">
+            <div class="container mx-auto flex justify-between items-center px-6 lg:px-12 h-24">
+                <!-- Logo -->
+                <a href="../index.html" class="flex items-center transition-transform hover:scale-105">
+                    <img src="img/brand_logo.png" alt="Pristine Touch Logo" class="h-16 w-auto object-contain drop-shadow-md">
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.3em] text-white items-center">
+                    <a href="../index.html" class="hover:text-emerald-400 transition-colors">Home</a>
+                    <a href="services.html" class="hover:text-emerald-400 transition-colors">Services</a>
+                    <a href="inquiry.html"
+                       class="bg-emerald-800 text-white px-8 py-3 rounded-[3px] text-[10px] tracking-[0.2em] font-black hover:bg-emerald-700 transition-all border border-emerald-600">
+                        Contact
+                    </a>
+                </div>
+
+                <!-- Animated Hamburger Button -->
+                <button id="menu-btn" type="button" aria-label="Open menu" class="md:hidden relative z-[70] w-10 h-10 text-white focus:outline-none">
+                    <div class="hamburger-box">
+                        <span class="hamburger-line top"></span>
+                        <span class="hamburger-line middle"></span>
+                        <span class="hamburger-line bottom"></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay: sibling of nav bar (matches index.html) -->
+        <div id="mobile-menu" class="pointer-events-auto fixed inset-0 bg-emerald-950/95 backdrop-blur-sm translate-x-full transition-transform duration-500 z-[100] md:hidden flex flex-col items-center justify-center gap-8 sm:gap-10 px-6 text-center pt-24 pb-12 overflow-y-auto">
+            <a href="../index.html" class="mobile-link">Home</a>
+            <a href="services.html" class="mobile-link">Services</a>
+            <a href="inquiry.html" class="mobile-link">Contact</a>
+        </div>
+    </nav>
+
+    <header class="bg-pristine-green pt-28 pb-16 text-center px-6">
         <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" style="font-family: serif;">Request a Free Quote</h1>
         <p class="text-emerald-200 max-w-xl mx-auto">Take the first step toward a spotless home. Follow our simple process below to get started.</p>
     </header>
@@ -82,5 +120,6 @@
         <p class="text-sm">Batinguel, Dumaguete City, Negros Oriental 6200</p>
     </footer>
 
+    <script src="../index.js"></script>
 </body>
 </html>

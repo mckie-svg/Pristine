@@ -1,84 +1,63 @@
+/* ==========================================================================
+   1. GLOBAL STYLES & SCROLLBAR
+   ========================================================================== */
+::-webkit-scrollbar {
+    width: 12px;
+}
 
-    /* Width of the scrollbar */
-    ::-webkit-scrollbar {
-        width: 12px;
-    }
+::-webkit-scrollbar-track {
+    background: #ffffff;
+}
 
-    /* Track (the background) */
-    ::-webkit-scrollbar-track {
-        background: #ffffff; /* White background */
-    }
+::-webkit-scrollbar-thumb {
+    background: #0b3d2b; /* Pristine-green theme */
+    border-radius: 0;
+    border: none;
+}
 
-    /* Handle (the moving part) */
-    ::-webkit-scrollbar-thumb {
-        background: #0b3d2b; /* Matches your pristine-green theme */
-        border-radius: 0;   /* Removed rounding if you want it flush, or keep 6px for soft edges */
-        border: none;       /* THIS REMOVES THE GAP */
-    }
+::-webkit-scrollbar-thumb:hover {
+    background: #062a1d;
+}
 
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: #062a1d; /* Slightly darker shade for interaction */
-    }
+::-webkit-scrollbar-button {
+    display: none;
+}
 
-    /* This removes the arrows/buttons by default */
-    ::-webkit-scrollbar-button {
-        display: none;
-    }
-
-    /* Force the calendar to always stay on top */
-
-
-/* Ensure the calendar doesn't get cut off by the 'relative' container */
+/* Fix for calendar/date picker visibility */
 .date-item {
     overflow: visible !important;
 }
 
-@keyframes infinite-slide {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-.animate-infinite-slide {
-  display: flex;
-  width: max-content;
-  animation: infinite-slide 30s linear infinite;
-}
-
-.pause-on-hover:hover .animate-infinite-slide {
-  animation-play-state: paused;
-}
-
-/* Fades the edges of the slider */
-.slider-mask {
-    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-}
-
-/* Updated image classes for better visibility */
-.slider-img {
-    filter: grayscale(30%); /* Less gray, more color visible */
-    opacity: 0.85; /* Much clearer by default */
-    transition: all 0.4s ease;
-}
-
-.slider-img:hover {
-    filter: grayscale(0%);
-    opacity: 1;
-    transform: scale(1.05); /* Slight pop on hover */
-}
-
-/* Smoothly transitions the navbar up and down */
-nav {
+/* ==========================================================================
+   2. NAVIGATION & HAMBURGER MORPH
+   ========================================================================== */
+#nav-bar-row {
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* This class will be toggled via JavaScript */
-.nav-hidden {
+/* Keep bar + hamburger above full-screen overlay when menu is open */
+#main-nav:has(#menu-btn.menu-open) #nav-bar-row {
+    position: relative;
+    z-index: 110;
+}
+
+#nav-bar-row.nav-hidden {
     transform: translateY(-100%);
 }
 
-/* Hamburger Lines Base Style */
+@keyframes hero-bg-fade-in {
+    from { opacity: 0; transform: scale(1.04); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.hero-bg-fade {
+    animation: hero-bg-fade-in 1.2s ease-out forwards;
+}
+
+.hero-bg-fade img {
+    animation: hero-bg-fade-in 1.4s ease-out forwards;
+}
+
 .hamburger-box {
     position: relative;
     width: 30px;
@@ -96,14 +75,14 @@ nav {
     opacity: 1;
     left: 0;
     transform: rotate(0deg);
-    transition: .25s ease-in-out; /* Smooth transition */
+    transition: .25s ease-in-out;
 }
 
 .hamburger-line.top { top: 0px; }
 .hamburger-line.middle { top: 10px; }
 .hamburger-line.bottom { top: 20px; }
 
-/* Morph to X when active */
+/* Morphing to 'X' state */
 .menu-open .hamburger-line.top {
     top: 10px;
     transform: rotate(135deg);
@@ -119,10 +98,95 @@ nav {
     transform: rotate(-135deg);
 }
 
-/* Mobile Link Styles */
+/* Mobile Menu Links (plain CSS — @apply requires Tailwind build) */
 .mobile-link {
-    @apply text-white text-3xl font-light tracking-[0.2em] uppercase transition-all duration-300;
+    color: #ffffff;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.3s ease, letter-spacing 0.3s ease, transform 0.3s ease;
+    display: block;
+    text-decoration: none;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
 }
-.mobile-link:hover {
-    @apply text-emerald-400 tracking-[0.3em];
+
+.mobile-link:hover,
+.mobile-link:focus-visible {
+    color: #34d399;
+    letter-spacing: 0.3em;
+    transform: scale(1.02);
+    outline: none;
+}
+
+/* ==========================================================================
+   3. INFINITE SLIDER & MASKING
+   ========================================================================== */
+@keyframes infinite-slide {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.animate-infinite-slide {
+    display: flex;
+    width: max-content;
+    animation: infinite-slide 30s linear infinite;
+}
+
+.pause-on-hover:hover .animate-infinite-slide {
+    animation-play-state: paused;
+}
+
+.slider-mask {
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.slider-img {
+    filter: grayscale(30%);
+    opacity: 0.85;
+    transition: all 0.4s ease;
+}
+
+.slider-img:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+#mini-calendar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+#mini-calendar::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, Opera */
+}
+
+.date-card {
+    flex: 0 0 80px; /* Fixed width for the landscape cards */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.date-card.active {
+    background: #064e3b; /* emerald-900 */
+    border-color: #064e3b;
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(6, 78, 59, 0.3);
+}
+
+.date-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f5f5f5;
 }
