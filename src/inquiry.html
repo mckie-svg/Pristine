@@ -10,7 +10,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700;900&display=swap');
 
-        body { font-family: 'Inter', sans-serif; }
+        html { -webkit-text-size-adjust: 100%; }
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .serif-font { font-family: 'Playfair Display', serif; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -25,6 +26,8 @@
             cursor: grab;
             user-select: none;
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x;
         }
         #mini-calendar:active { cursor: grabbing; }
 
@@ -78,7 +81,10 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.25s ease;
-            padding: 20px;
+            padding: 12px;
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
         }
         #full-calendar-modal.open {
             opacity: 1;
@@ -89,6 +95,7 @@
             border-radius: 24px;
             width: 100%;
             max-width: 860px;
+            max-height: min(95vh, 100dvh);
             overflow: hidden;
             box-shadow: 0 30px 80px rgba(0,0,0,0.25);
             transform: scale(0.96) translateY(10px);
@@ -96,8 +103,41 @@
             display: flex;
             flex-direction: row;
         }
-        #full-calendar-modal.open .modal-inner {
-            transform: scale(1) translateY(0);
+        @media (max-width: 767px) {
+            #full-calendar-modal { align-items: flex-end; padding: 0; }
+            .modal-inner {
+                flex-direction: column;
+                max-height: min(92vh, 100dvh);
+                border-radius: 20px 20px 0 0;
+                transform: translateY(100%);
+            }
+            #full-calendar-modal.open .modal-inner {
+                transform: translateY(0);
+            }
+            .modal-left {
+                width: 100% !important;
+                max-height: 42vh;
+                overflow-y: auto;
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 20px 16px !important;
+                gap: 16px !important;
+            }
+            .modal-left > div:first-child { flex: 1 1 100%; }
+            #modal-selected-summary { flex: 1 1 140px; }
+            .modal-left > div:nth-child(3) { flex: 1 1 160px; max-height: 120px; overflow-y: auto; }
+            .modal-left .mt-auto { margin-top: 0 !important; flex: 1 1 100%; }
+            #close-modal { flex: 1 1 100%; }
+            .modal-right {
+                max-height: 48vh;
+                min-height: 180px;
+                padding: 16px !important;
+            }
+        }
+        @media (min-width: 768px) {
+            #full-calendar-modal.open .modal-inner {
+                transform: scale(1) translateY(0);
+            }
         }
 
         /* Left panel of modal */
@@ -156,7 +196,40 @@
         }
 
         /* Scrollbar for modal body */
-        .modal-right { flex: 1; padding: 28px 28px 24px; overflow-y: auto; max-height: 90vh; }
+        .modal-right { flex: 1; min-width: 0; padding: 28px 28px 24px; overflow-y: auto; max-height: 90vh; }
+
+        .month-cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1.5px solid #f0fdf4;
+        }
+        .cal-7-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 4px;
+        }
+        .cal-day-labels { margin-bottom: 4px; }
+        .cal-dow-label {
+            text-align: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #a8a29e;
+            padding: 4px 0;
+        }
+        @media (min-width: 400px) {
+            .cal-dow-label { font-size: 10px; }
+        }
+        .cal-empty-cell { min-height: 32px; height: 36px; }
+        @media (max-width: 420px) {
+            .cal-7-grid { gap: 2px; }
+            .cal-day-btn { font-size: 11px; min-height: 32px; padding: 0 1px; }
+            .cal-empty-cell { height: 32px; min-height: 28px; }
+        }
 
         /* Trust badges */
         .trust-badge {
@@ -170,6 +243,8 @@
             font-size: 12px;
             font-weight: 600;
             color: #065f46;
+            min-width: 0;
+            overflow-wrap: anywhere;
         }
 
         /* Step indicator */
@@ -186,6 +261,24 @@
             font-weight: 700;
             flex-shrink: 0;
         }
+
+        /* Cleaning services checklist — scroll region */
+        .service-types-scroll {
+            max-height: min(28rem, 62vh);
+            overflow-y: auto;
+            padding-right: 6px;
+            margin-right: -4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #0b3d2b #f5f5f4;
+        }
+        .service-types-scroll::-webkit-scrollbar { width: 6px; }
+        .service-types-scroll::-webkit-scrollbar-track { background: #f5f5f4; border-radius: 6px; }
+        .service-types-scroll::-webkit-scrollbar-thumb { background: #0b3d2b; border-radius: 6px; }
+
+        @media (max-width: 639px) {
+            .service-types-scroll { max-height: min(22rem, 50vh); }
+        }
     </style>
     <script>
         tailwind.config = {
@@ -199,11 +292,11 @@
         }
     </script>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body class="bg-stone-50 text-stone-800 antialiased min-h-screen w-full overflow-x-hidden">
 
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 pointer-events-none">
         <div id="nav-bar-row" class="pointer-events-auto bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50 transition-transform duration-300 ease-out">
-            <div class="container mx-auto flex justify-between items-center gap-3 px-6 lg:px-12 h-24 min-w-0">
+            <div class="container mx-auto flex justify-between items-center gap-3 px-4 sm:px-6 lg:px-12 h-20 sm:h-24 min-w-0">
                 <!-- Logo -->
                 <a href="../index.html" class="flex min-w-0 flex-1 items-center transition-transform hover:scale-105 md:flex-none">
                     <img src="img/brand_logo.png" alt="Pristine Touch Logo" class="h-12 w-auto max-h-16 max-w-[min(200px,52vw)] object-contain object-left drop-shadow-md sm:h-16 sm:max-w-[220px]">
@@ -239,49 +332,49 @@
     </nav>
 
 <!-- HEADER -->
-<header class="bg-pristine-green pt-28 pb-20 text-center px-6 relative overflow-hidden">
+<header class="bg-pristine-green pt-24 sm:pt-28 pb-14 sm:pb-20 text-center px-4 sm:px-6 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 20% 50%, #2ecc71 0%, transparent 50%), radial-gradient(circle at 80% 20%, #16a34a 0%, transparent 40%);"></div>
-    <div class="relative z-10">
-        <p class="text-emerald-400 font-bold tracking-[0.3em] uppercase text-xs mb-4">Book a Service</p>
-        <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 serif-font">Start an Inquiry</h1>
-        <p class="text-emerald-200 max-w-lg mx-auto text-base leading-relaxed">Tell us about your space. We'll craft a custom plan and get back to you within 24 hours.</p>
+    <div class="relative z-10 max-w-3xl mx-auto">
+        <p class="text-emerald-400 font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs mb-3 sm:mb-4">Book a Service</p>
+        <h1 class="text-[1.75rem] leading-tight sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 serif-font px-1">Start an Inquiry</h1>
+        <p class="text-emerald-200 max-w-lg mx-auto text-sm sm:text-base leading-relaxed px-1">Tell us about your space. We'll craft a custom plan and get back to you within 24 hours.</p>
 
         <!-- Quick trust row -->
-        <div class="mt-8 flex flex-wrap justify-center gap-4">
-            <div class="flex items-center gap-2 bg-white/10 text-emerald-100 text-xs font-semibold px-4 py-2 rounded-full border border-white/20">
-                <svg class="w-3.5 h-3.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                No Commitment Required
+        <div class="mt-6 sm:mt-8 flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4">
+            <div class="flex items-center gap-1.5 sm:gap-2 bg-white/10 text-emerald-100 text-[10px] sm:text-xs font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20 max-w-[100%]">
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-300 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span class="text-left leading-tight">No Commitment Required</span>
             </div>
-            <div class="flex items-center gap-2 bg-white/10 text-emerald-100 text-xs font-semibold px-4 py-2 rounded-full border border-white/20">
-                <svg class="w-3.5 h-3.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Free Custom Quote
+            <div class="flex items-center gap-1.5 sm:gap-2 bg-white/10 text-emerald-100 text-[10px] sm:text-xs font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20 max-w-[100%]">
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-300 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span class="text-left leading-tight">Free Custom Quote</span>
             </div>
-            <div class="flex items-center gap-2 bg-white/10 text-emerald-100 text-xs font-semibold px-4 py-2 rounded-full border border-white/20">
-                <svg class="w-3.5 h-3.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Reply Within 24hrs
+            <div class="flex items-center gap-1.5 sm:gap-2 bg-white/10 text-emerald-100 text-[10px] sm:text-xs font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20 max-w-[100%]">
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-300 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span class="text-left leading-tight">Reply Within 24hrs</span>
             </div>
         </div>
     </div>
 </header>
 
 <!-- STEP CARDS -->
-<section class="max-w-4xl mx-auto px-6 -mt-8 mb-12 relative z-10">
-    <div class="grid md:grid-cols-3 gap-4">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-4">
+<section class="max-w-4xl mx-auto px-4 sm:px-6 -mt-6 sm:-mt-8 mb-8 sm:mb-12 relative z-10 w-full box-border">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-3 sm:gap-4 min-w-0">
             <div class="step-num">01</div>
             <div>
                 <h3 class="font-bold text-sm uppercase tracking-wider mb-1 text-stone-800">Contact Info</h3>
                 <p class="text-xs text-stone-500 leading-relaxed">Your name, number, and how you'd like us to reach you.</p>
             </div>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-4">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-3 sm:gap-4 min-w-0">
             <div class="step-num">02</div>
             <div>
                 <h3 class="font-bold text-sm uppercase tracking-wider mb-1 text-stone-800">Property Details</h3>
                 <p class="text-xs text-stone-500 leading-relaxed">Location, size, and any special requirements for our team.</p>
             </div>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-4">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-stone-100 flex items-start gap-3 sm:gap-4 min-w-0">
             <div class="step-num">03</div>
             <div>
                 <h3 class="font-bold text-sm uppercase tracking-wider mb-1 text-stone-800">Schedule & Quote</h3>
@@ -292,23 +385,23 @@
 </section>
 
 <!-- MAIN FORM + SIDEBAR -->
-<section class="py-4 pb-16 container mx-auto px-6 max-w-6xl">
-    <div class="flex flex-col lg:flex-row gap-8 items-start">
+<section class="py-4 pb-12 sm:pb-16 container mx-auto px-4 sm:px-6 max-w-6xl w-full overflow-x-hidden box-border">
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_18rem] gap-6 lg:gap-8 xl:gap-10 items-start min-w-0 w-full">
 
         <!-- FORM -->
-        <div class="flex-1 bg-white p-6 md:p-10 rounded-3xl shadow-lg border border-stone-100">
-            <h2 class="text-3xl font-bold mb-1 text-pristine-green serif-font">Service Inquiry</h2>
-            <p class="text-stone-500 mb-8 text-sm">All fields marked with <span class="text-red-400">*</span> are required. We'll follow up with a tailored quote within 24 hours.</p>
+        <div class="order-1 min-w-0 w-full bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl shadow-lg border border-stone-100">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-1 text-pristine-green serif-font">Service Inquiry</h2>
+            <p class="text-stone-500 mb-6 sm:mb-8 text-xs sm:text-sm leading-relaxed">All fields marked with <span class="text-red-400">*</span> are required. We'll follow up with a tailored quote within 24 hours.</p>
 
-            <form action="#" method="POST" class="space-y-10">
+            <form id="inquiry-form" action="#" method="POST" class="space-y-10">
 
                 <!-- SECTION 1: Contact -->
-                <fieldset>
-                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
+                <fieldset class="min-w-0">
+                    <legend class="flex flex-wrap items-center gap-2 sm:gap-3 w-full mb-6 pb-3 border-b border-stone-100">
                         <span class="step-num text-sm">01</span>
-                        <span class="text-base font-bold text-stone-800">Contact Information</span>
+                        <span class="text-sm sm:text-base font-bold text-stone-800">Contact Information</span>
                     </legend>
-                    <div class="grid md:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Full Name <span class="text-red-400">*</span></label>
                             <input type="text" placeholder="Juan Dela Cruz" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm" required>
@@ -332,60 +425,113 @@
                     </div>
                 </fieldset>
 
-                <!-- SECTION 2: Service Type -->
-                <fieldset>
-                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
-                        <span class="step-num text-sm">02</span>
-                        <span class="text-base font-bold text-stone-800">Service Type</span>
+                <!-- SECTION 2: Cleaning services (multi-select) -->
+                <fieldset id="fieldset-cleaning-services" class="min-w-0 rounded-2xl border border-stone-200/80 bg-gradient-to-b from-stone-50/80 to-white p-4 sm:p-5 md:p-7 shadow-sm">
+                    <legend class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full mb-5 pb-4 border-b border-stone-200">
+                        <div class="flex items-start gap-3">
+                            <span class="step-num text-sm shrink-0">02</span>
+                            <div>
+                                <span class="text-base font-bold text-stone-800 leading-snug block">Cleaning services</span>
+                                <p class="text-sm text-stone-600 mt-1 leading-relaxed">
+                                    What type of cleaning services do you need? <span class="text-red-500 font-semibold">*</span> <span class="text-stone-400 font-normal">(Check all that apply)</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button type="button" id="cleaning-types-help" class="service-check-hint flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 rounded-full px-3 py-1.5 transition shrink-0 self-start sm:self-center" aria-expanded="false" aria-controls="cleaning-types-help-panel">
+                            <span class="w-5 h-5 rounded-full bg-pristine-green text-white flex items-center justify-center text-[11px] font-bold">?</span>
+                            Quick tips
+                        </button>
                     </legend>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="service_type" value="Basic" class="peer hidden" required>
-                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
-                                <div class="text-2xl mb-2"></div>
-                                <p class="text-xs font-bold text-stone-700">Basic</p>
-                                <p class="text-[10px] text-stone-400 mt-0.5">Sweep, Mop, Dust</p>
+                    <p id="cleaning-types-help-panel" class="hidden text-xs text-stone-600 bg-white border border-emerald-100 rounded-xl p-4 mb-4 leading-relaxed">
+                        Choose every service you need — we’ll bundle them into one quote. If you pick <strong>Iba pa</strong>, tell us briefly what you have in mind so our team can follow up accurately.
+                    </p>
+                    <p id="services-check-error" class="hidden text-sm font-semibold text-red-600 mb-3 flex items-center gap-2" role="alert">
+                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                        Please select at least one cleaning service.
+                    </p>
+                    <div class="service-types-scroll space-y-2 sm:space-y-3 pr-1">
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                            <input type="checkbox" name="cleaning_services[]" value="deep_cleaning" class="peer sr-only">
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
+                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <span class="font-bold text-stone-900 text-sm">Deep Cleaning</span>
+                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Floor scrubbing/polishing, wall and ceiling cleaning, window glass cleaning, high dusting)</p>
                             </div>
                         </label>
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="service_type" value="Deep" class="peer hidden">
-                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
-                                <div class="text-2xl mb-2"></div>
-                                <p class="text-xs font-bold text-stone-700">Deep Clean</p>
-                                <p class="text-[10px] text-stone-400 mt-0.5">Scrub, Sanitize</p>
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                            <input type="checkbox" name="cleaning_services[]" value="commercial_establishment" class="peer sr-only">
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
+                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <span class="font-bold text-stone-900 text-sm">Commercial / Establishment Cleaning</span>
+                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Office workspace cleaning, restaurant cleaning, dining area cleaning, classroom cleaning, clinic sanitation cleaning, hotel room cleaning, hallway and lobby cleaning)</p>
                             </div>
                         </label>
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="service_type" value="Move" class="peer hidden">
-                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
-                                <div class="text-2xl mb-2"></div>
-                                <p class="text-xs font-bold text-stone-700">Move In/Out</p>
-                                <p class="text-[10px] text-stone-400 mt-0.5">Full Refresh</p>
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                            <input type="checkbox" name="cleaning_services[]" value="general_cleaning" class="peer sr-only">
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
+                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <span class="font-bold text-stone-900 text-sm">General Cleaning</span>
+                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Floor sweeping and mopping, dusting of furniture and fixtures, trash removal, restroom cleaning)</p>
                             </div>
                         </label>
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="service_type" value="Commercial" class="peer hidden">
-                            <div class="border-2 border-stone-200 rounded-xl p-4 text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
-                                <div class="text-2xl mb-2"></div>
-                                <p class="text-xs font-bold text-stone-700">Commercial</p>
-                                <p class="text-[10px] text-stone-400 mt-0.5">Office / Store</p>
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                            <input type="checkbox" name="cleaning_services[]" value="sanitation_disinfection" class="peer sr-only">
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
+                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <span class="font-bold text-stone-900 text-sm">Sanitation / Disinfection</span>
+                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Fogging disinfection, sanitizing high-touch areas, restroom sanitation, air disinfection)</p>
                             </div>
                         </label>
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                            <input type="checkbox" name="cleaning_services[]" value="specialized_cleaning" class="peer sr-only">
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
+                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <span class="font-bold text-stone-900 text-sm">Specialized Cleaning</span>
+                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Move-in / Move-out cleaning, post construction cleaning, event cleaning, carpet cleaning)</p>
+                            </div>
+                        </label>
+                        <div class="rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white p-3 sm:p-4 transition-all has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 min-w-0">
+                            <label class="group flex gap-4 cursor-pointer">
+                                <input type="checkbox" name="cleaning_services[]" value="other" id="cleaning-other" class="peer sr-only">
+                                <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
+                                    <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="font-bold text-stone-900 text-sm">Iba pa <span class="font-normal text-stone-500">(Others)</span></span>
+                                    <p class="text-xs text-stone-500 mt-1">Specify below if you need something not listed.</p>
+                                </div>
+                            </label>
+                            <div id="other-cleaning-wrap" class="hidden mt-4 pl-0 sm:pl-9 border-t border-stone-100 pt-4">
+                                <label for="cleaning_other_details" class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Describe your other service needs <span class="text-red-500">*</span></label>
+                                <textarea id="cleaning_other_details" name="cleaning_other_details" rows="3" placeholder="e.g. upholstery, industrial kitchen, specific schedule…" class="w-full p-4 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm resize-none"></textarea>
+                                <p id="other-details-error" class="hidden text-xs font-semibold text-red-600 mt-2" role="alert">Please add a short description when “Iba pa” is selected.</p>
+                            </div>
+                        </div>
                     </div>
                 </fieldset>
 
                 <!-- SECTION 3: Property -->
-                <fieldset>
-                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
+                <fieldset class="min-w-0">
+                    <legend class="flex flex-wrap items-center gap-2 sm:gap-3 w-full mb-6 pb-3 border-b border-stone-100">
                         <span class="step-num text-sm">03</span>
-                        <span class="text-base font-bold text-stone-800">Property Details</span>
+                        <span class="text-sm sm:text-base font-bold text-stone-800">Property Details</span>
                     </legend>
                     <div class="space-y-5">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Service Address <span class="text-red-400">*</span></label>
                             <input type="text" placeholder="Street, Barangay, City, Landmark" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm" required>
                         </div>
-                        <div class="grid md:grid-cols-3 gap-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Property Type</label>
                                 <select class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition cursor-pointer text-sm text-stone-700">
@@ -413,19 +559,19 @@
                 </fieldset>
 
                 <!-- SECTION 4: Schedule -->
-                <fieldset>
-                    <legend class="flex items-center gap-3 w-full mb-6 pb-3 border-b border-stone-100">
+                <fieldset class="min-w-0">
+                    <legend class="flex flex-wrap items-center gap-2 sm:gap-3 w-full mb-6 pb-3 border-b border-stone-100">
                         <span class="step-num text-sm">04</span>
-                        <span class="text-base font-bold text-stone-800">Preferred Schedule</span>
+                        <span class="text-sm sm:text-base font-bold text-stone-800">Preferred Schedule</span>
                     </legend>
 
                     <!-- Selected date display -->
-                    <div id="calendar-header" class="mb-5 flex items-center justify-between bg-stone-50 px-5 py-4 rounded-2xl border border-stone-200">
-                        <div>
+                    <div id="calendar-header" class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-stone-50 px-4 sm:px-5 py-4 rounded-2xl border border-stone-200 min-w-0">
+                        <div class="min-w-0">
                             <p class="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-black mb-0.5">Selected Date</p>
-                            <h3 id="calendar-header-date" class="text-base font-bold text-stone-400 italic">No date selected yet</h3>
+                            <h3 id="calendar-header-date" class="text-sm sm:text-base font-bold text-stone-400 italic break-words">No date selected yet</h3>
                         </div>
-                        <span id="date-badge" class="hidden px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 uppercase tracking-wide">Available</span>
+                        <span id="date-badge" class="hidden self-start sm:self-center shrink-0 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 uppercase tracking-wide">Available</span>
                     </div>
 
                     <!-- Mini calendar strip -->
@@ -435,16 +581,16 @@
                     </div>
 
                     <!-- Legend + button row -->
-                    <div class="flex justify-between items-center mt-4 mb-8">
-                        <button type="button" id="open-full-calendar" class="flex items-center gap-2 text-sm font-bold text-emerald-700 hover:text-emerald-900 transition bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-full border border-emerald-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-4 mb-8 min-w-0">
+                        <button type="button" id="open-full-calendar" class="w-full sm:w-auto justify-center flex items-center gap-2 text-xs sm:text-sm font-bold text-emerald-700 hover:text-emerald-900 transition bg-emerald-50 hover:bg-emerald-100 px-4 py-2.5 rounded-full border border-emerald-200 touch-manipulation">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            View Full Calendar (60 days)
+                            <span class="text-center sm:text-left leading-tight">View full calendar (60 days)</span>
                         </button>
-                        <div class="flex gap-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Available</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-stone-300 inline-block"></span> Booked</span>
+                        <div class="flex flex-wrap gap-3 sm:gap-4 text-[10px] font-bold text-stone-400 uppercase tracking-wider sm:tracking-widest">
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shrink-0"></span> Available</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-stone-300 inline-block shrink-0"></span> Booked</span>
                         </div>
                     </div>
 
@@ -453,26 +599,26 @@
                     <!-- Time window -->
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Preferred Time Window</label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <label class="cursor-pointer group">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Morning" class="peer hidden" required>
-                                <div class="p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
                                     <span class="block text-xl mb-1"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Morning</span>
                                     <span class="text-xs text-stone-400">8:00 AM – 12:00 PM</span>
                                 </div>
                             </label>
-                            <label class="cursor-pointer group">
+                            <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Afternoon" class="peer hidden">
-                                <div class="p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
                                     <span class="block text-xl mb-1"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Afternoon</span>
                                     <span class="text-xs text-stone-400">1:00 PM – 5:00 PM</span>
                                 </div>
                             </label>
-                            <label class="cursor-pointer group">
+                            <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Flexible" class="peer hidden">
-                                <div class="p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
                                     <span class="block text-xl mb-1"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Flexible</span>
                                     <span class="text-xs text-stone-400">Anytime works</span>
@@ -482,7 +628,7 @@
                     </div>
                 </fieldset>
 
-                <button type="submit" class="w-full bg-pristine-green text-white py-5 rounded-2xl font-bold hover:bg-emerald-900 transition-all text-base shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2">
+                <button type="submit" class="w-full bg-pristine-green text-white py-4 sm:py-5 rounded-2xl font-bold hover:bg-emerald-900 transition-all text-sm sm:text-base shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 touch-manipulation">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                     Submit Inquiry
                 </button>
@@ -492,10 +638,10 @@
         </div>
 
         <!-- SIDEBAR -->
-        <div class="lg:w-72 flex flex-col gap-5 sticky top-24">
+        <aside class="order-2 w-full min-w-0 lg:pr-2 flex flex-col gap-4 sm:gap-5 lg:sticky lg:top-24 self-start overflow-x-hidden">
 
             <!-- What to expect -->
-            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
+            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-4 sm:p-6 min-w-0">
                 <h3 class="font-bold text-stone-800 text-sm uppercase tracking-wider mb-4">What Happens Next</h3>
                 <ul class="space-y-4">
                     <li class="flex gap-3 items-start">
@@ -518,7 +664,7 @@
             </div>
 
             <!-- Trust badges -->
-            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 space-y-3">
+            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-4 sm:p-6 space-y-3 min-w-0 overflow-hidden">
                 <h3 class="font-bold text-stone-800 text-sm uppercase tracking-wider mb-2">Our Commitment</h3>
                 <div class="trust-badge">
                     <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
@@ -539,22 +685,22 @@
             </div>
 
             <!-- Contact block -->
-            <div class="bg-pristine-green rounded-2xl p-6 text-white">
+            <div class="bg-pristine-green rounded-2xl p-4 sm:p-6 text-white min-w-0 overflow-hidden">
                 <p class="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Prefer to talk directly?</p>
-                <h3 class="font-bold text-lg mb-3 serif-font">Reach us anytime</h3>
-                <a href="tel:+639000000000" class="flex items-center gap-2 text-sm text-emerald-200 hover:text-white transition mb-2">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
-                    +61 961 464 5286
+                <h3 class="font-bold text-base sm:text-lg mb-3 serif-font">Reach us anytime</h3>
+                <a href="tel:+639000000000" class="flex items-start gap-2 text-sm text-emerald-200 hover:text-white transition mb-2 break-words">
+                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+                    <span>+61 961 464 5286</span>
                 </a>
-                <a href="mailto:hello@pristinetouch.ph" class="flex items-center gap-2 text-sm text-emerald-200 hover:text-white transition">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-                    pristinetouchdgte@gmail.com
+                <a href="mailto:pristinetouchdgte@gmail.com" class="flex items-start gap-2 text-sm text-emerald-200 hover:text-white transition break-all">
+                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+                    <span>pristinetouchdgte@gmail.com</span>
                 </a>
                 <div class="mt-4 pt-4 border-t border-emerald-800 text-xs text-emerald-400">
                     Mon – Sat &nbsp;·&nbsp; 8:00 AM – 6:00 PM
                 </div>
             </div>
-        </div>
+        </aside>
 
     </div>
 </section>
@@ -613,9 +759,9 @@
     </div>
 </div>
 
-<footer class="bg-pristine-green text-stone-400 py-12 text-center">
-    <p class="font-bold text-white mb-1">Pristine Touch Cleaning Service</p>
-    <p class="text-sm">Batinguel, Dumaguete City, Negros Oriental 6200</p>
+<footer class="bg-pristine-green text-stone-400 py-10 sm:py-12 text-center px-4">
+    <p class="font-bold text-white mb-1 text-sm sm:text-base">Pristine Touch Cleaning Service</p>
+    <p class="text-xs sm:text-sm max-w-md mx-auto leading-relaxed">Batinguel, Dumaguete City, Negros Oriental 6200</p>
 </footer>
 
 <script>
@@ -631,6 +777,79 @@
     });
 
     let selectedDateStr = '';
+
+    // Cleaning services checklist: "Iba pa" reveal, help toggle, submit validation
+    (function initCleaningServicesFieldset() {
+        const form = document.getElementById('inquiry-form');
+        if (!form) return;
+
+        const otherChk = document.getElementById('cleaning-other');
+        const otherWrap = document.getElementById('other-cleaning-wrap');
+        const otherTa = document.getElementById('cleaning_other_details');
+        const otherErr = document.getElementById('other-details-error');
+        const servicesErr = document.getElementById('services-check-error');
+        const fieldsetServices = document.getElementById('fieldset-cleaning-services');
+        const helpBtn = document.getElementById('cleaning-types-help');
+        const helpPanel = document.getElementById('cleaning-types-help-panel');
+
+        function syncOtherField() {
+            if (!otherChk || !otherWrap || !otherTa) return;
+            if (otherChk.checked) {
+                otherWrap.classList.remove('hidden');
+                otherTa.setAttribute('required', 'required');
+                otherTa.focus();
+            } else {
+                otherWrap.classList.add('hidden');
+                otherTa.value = '';
+                otherTa.removeAttribute('required');
+                if (otherErr) otherErr.classList.add('hidden');
+            }
+        }
+
+        if (otherChk) otherChk.addEventListener('change', syncOtherField);
+
+        form.querySelectorAll('input[name="cleaning_services[]"]').forEach(function (el) {
+            el.addEventListener('change', function () {
+                if (servicesErr) servicesErr.classList.add('hidden');
+                if (otherErr && otherChk && otherChk.checked && String(otherTa && otherTa.value).trim()) {
+                    otherErr.classList.add('hidden');
+                }
+            });
+        });
+
+        if (otherTa && otherErr) {
+            otherTa.addEventListener('input', function () {
+                if (String(otherTa.value).trim()) otherErr.classList.add('hidden');
+            });
+        }
+
+        if (helpBtn && helpPanel) {
+            helpBtn.addEventListener('click', function () {
+                const willShow = helpPanel.classList.contains('hidden');
+                helpPanel.classList.toggle('hidden');
+                helpBtn.setAttribute('aria-expanded', willShow ? 'true' : 'false');
+            });
+        }
+
+        form.addEventListener('submit', function (e) {
+            const checked = form.querySelectorAll('input[name="cleaning_services[]"]:checked');
+            if (checked.length === 0) {
+                e.preventDefault();
+                if (servicesErr) servicesErr.classList.remove('hidden');
+                if (fieldsetServices) fieldsetServices.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            if (servicesErr) servicesErr.classList.add('hidden');
+
+            if (otherChk && otherChk.checked && (!otherTa || !String(otherTa.value).trim())) {
+                e.preventDefault();
+                if (otherErr) otherErr.classList.remove('hidden');
+                if (otherWrap) otherWrap.classList.remove('hidden');
+                if (otherTa) otherTa.focus();
+                if (fieldsetServices) fieldsetServices.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    })();
 
     function fmtDateStr(d) {
         return d.toISOString().split('T')[0];
@@ -742,7 +961,7 @@
 
             // Month header
             const mhdr = document.createElement('div');
-            mhdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1.5px solid #f0fdf4;';
+            mhdr.className = 'month-cal-header';
             mhdr.innerHTML = `
                 <span style="font-size:16px;font-weight:700;color:#1c1917;">${monthName}</span>
                 <span style="font-size:11px;font-weight:600;color:#a78bfa;background:#f5f3ff;padding:2px 10px;border-radius:20px;">
@@ -753,22 +972,24 @@
 
             // Day labels
             const dayRow = document.createElement('div');
-            dayRow.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;';
+            dayRow.className = 'cal-7-grid cal-day-labels';
             ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
                 const span = document.createElement('div');
                 span.textContent = d;
-                span.style.cssText = 'text-align:center;font-size:10px;font-weight:700;color:#a8a29e;padding:4px 0;';
+                span.className = 'cal-dow-label';
                 dayRow.appendChild(span);
             });
             block.appendChild(dayRow);
 
             // Day grid
             const grid = document.createElement('div');
-            grid.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);gap:4px;';
+            grid.className = 'cal-7-grid cal-day-cells';
 
             const firstDay = monthStart.getDay();
             for (let p = 0; p < firstDay; p++) {
-                grid.appendChild(Object.assign(document.createElement('div'), {style:'height:36px;'}));
+                const ph = document.createElement('div');
+                ph.className = 'cal-empty-cell';
+                grid.appendChild(ph);
             }
 
             const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth()+1, 0).getDate();
