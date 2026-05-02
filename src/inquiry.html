@@ -6,50 +6,106 @@
     <title>Inquiry | Pristine Touch Cleaning Service</title>
     <link rel="shortcut icon" href="../src/img/icon.jpeg" type="image/x-icon">
     <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700;900&display=swap');
-
-        html { -webkit-text-size-adjust: 100%; }
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-rendering: optimizeLegibility;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
         .serif-font { font-family: 'Playfair Display', serif; }
+
+        @media (prefers-reduced-motion: reduce) {
+            #full-calendar-modal {
+                transition: none;
+            }
+            #full-calendar-modal,
+            #full-calendar-modal.open {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+            }
+            .modal-inner {
+                transition: none !important;
+            }
+            #mini-calendar {
+                scroll-behavior: auto;
+            }
+            .date-pill {
+                transition: none;
+            }
+        }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Mini calendar scroll strip */
+        /* Mini calendar: full-width scroll on small screens, snap + safe overscroll */
+        .mini-calendar-wrap {
+            width: 100%;
+            min-width: 0;
+            margin-left: calc(-1 * min(1rem, 5vw));
+            margin-right: calc(-1 * min(1rem, 5vw));
+            padding-left: min(1rem, 5vw);
+            padding-right: min(1rem, 5vw);
+        }
+        @media (min-width: 640px) {
+            .mini-calendar-wrap {
+                margin-left: 0;
+                margin-right: 0;
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
         #mini-calendar {
             display: flex;
-            gap: 10px;
+            gap: clamp(6px, 2vw, 10px);
             overflow-x: auto;
-            padding-bottom: 8px;
+            padding: 4px 2px 10px;
             cursor: grab;
             user-select: none;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             touch-action: pan-x;
+            scroll-snap-type: x proximity;
+            overscroll-behavior-x: contain;
+            scrollbar-width: thin;
+            scrollbar-color: #0b3d2b #f5f5f4;
         }
+        #mini-calendar::-webkit-scrollbar { height: 4px; }
+        #mini-calendar::-webkit-scrollbar-thumb { background: #0b3d2b; border-radius: 4px; }
         #mini-calendar:active { cursor: grabbing; }
 
         .date-pill {
             flex-shrink: 0;
-            width: 64px;
-            height: 80px;
+            width: clamp(52px, 15.5vw, 64px);
+            height: clamp(66px, 20vw, 80px);
+            scroll-snap-align: start;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 16px;
+            border-radius: clamp(12px, 3vw, 16px);
             border: 1.5px solid #e7e5e4;
             background: #fff;
             cursor: pointer;
-            transition: all 0.18s ease;
+            transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
             position: relative;
         }
-        .date-pill:hover:not(.booked) {
-            border-color: #059669;
-            background: #f0fdf4;
-            transform: translateY(-2px);
+        @media (hover: hover) {
+            .date-pill:hover:not(.booked) {
+                border-color: #059669;
+                background: #f0fdf4;
+                transform: translateY(-2px);
+            }
         }
         .date-pill.selected {
             background: #0b3d2b;
@@ -58,17 +114,48 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(11,61,43,0.25);
         }
-        .date-pill.selected .day-name { color: #6ee7b7; }
-        .date-pill.selected .month-label { color: #a7f3d0; }
+        .date-pill-day {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+            color: #059669;
+        }
+        @media (min-width: 400px) {
+            .date-pill-day { font-size: 10px; }
+        }
+        .date-pill-num {
+            font-size: clamp(17px, 5.5vw, 22px);
+            font-weight: 900;
+            line-height: 1;
+            color: #1c1917;
+        }
+        .date-pill-month {
+            font-size: 8px;
+            font-weight: 700;
+            opacity: 0.5;
+            text-transform: uppercase;
+            margin-top: 2px;
+            color: #57534e;
+        }
+        @media (min-width: 400px) {
+            .date-pill-month { font-size: 9px; }
+        }
+        .date-pill.selected .date-pill-day { color: #6ee7b7; }
+        .date-pill.selected .date-pill-month { color: #a7f3d0; opacity: 0.9; }
+        .date-pill.selected .date-pill-num { color: #fff; }
         .date-pill.booked {
             background: #f5f5f4;
             border-color: #e7e5e4;
             cursor: not-allowed;
-            opacity: 0.5;
+            opacity: 0.55;
         }
+        .date-pill.booked .date-pill-day,
+        .date-pill.booked .date-pill-num,
+        .date-pill.booked .date-pill-month { color: #a8a29e; }
         .date-pill.today-pill { border-color: #059669; }
 
-        /* Full landscape modal */
+        /* Full calendar modal — Pristine emerald (#0b3d2b) + stone surfaces */
         #full-calendar-modal {
             position: fixed;
             inset: 0;
@@ -76,12 +163,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(11,61,43,0.55);
-            backdrop-filter: blur(4px);
+            background: rgba(11, 61, 43, 0.52);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.22s ease;
+            contain: layout paint;
             padding: 12px;
+            padding-top: max(12px, env(safe-area-inset-top));
             padding-left: max(12px, env(safe-area-inset-left));
             padding-right: max(12px, env(safe-area-inset-right));
             padding-bottom: max(12px, env(safe-area-inset-bottom));
@@ -91,70 +181,481 @@
             pointer-events: all;
         }
         .modal-inner {
-            background: #fff;
-            border-radius: 24px;
-            width: 100%;
+            background: #fafaf9;
+            border-radius: 20px;
+            width: min(100%, 860px);
             max-width: 860px;
-            max-height: min(95vh, 100dvh);
+            min-width: 0;
+            max-height: min(95vh, 100dvh, 100svh);
             overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
-            transform: scale(0.96) translateY(10px);
-            transition: transform 0.25s ease;
+            border: 1px solid rgba(11, 61, 43, 0.1);
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.75) inset,
+                0 24px 48px -12px rgba(0, 0, 0, 0.22);
+            transform: scale(0.98) translateY(8px) translateZ(0);
+            transition: transform 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            contain: layout style;
+            backface-visibility: hidden;
+        }
+
+        .modal-body {
             display: flex;
             flex-direction: row;
+            flex: 1 1 auto;
+            min-height: 0;
+            min-width: 0;
+            align-items: stretch;
+            contain: layout;
         }
         @media (max-width: 767px) {
-            #full-calendar-modal { align-items: flex-end; padding: 0; }
+            #full-calendar-modal {
+                align-items: flex-end;
+                justify-content: center;
+                padding: 0;
+                padding-top: max(8px, env(safe-area-inset-top));
+            }
+            .modal-inner::before {
+                content: '';
+                display: block;
+                order: -1;
+                width: 40px;
+                height: 4px;
+                border-radius: 999px;
+                background: #d6d3d1;
+                margin: 12px auto 8px;
+                flex: 0 0 auto;
+                align-self: center;
+            }
             .modal-inner {
                 flex-direction: column;
-                max-height: min(92vh, 100dvh);
-                border-radius: 20px 20px 0 0;
-                transform: translateY(100%);
+                width: 100%;
+                max-height: min(93dvh, 93svh, calc(100dvh - env(safe-area-inset-top) - 6px));
+                border-radius: 18px 18px 0 0;
+                transform: translate3d(0, 100%, 0);
+                padding-bottom: 0;
+                box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.12);
             }
             #full-calendar-modal.open .modal-inner {
-                transform: translateY(0);
+                transform: translate3d(0, 0, 0);
             }
+            .modal-body {
+                flex-direction: column;
+                flex: 1 1 auto;
+                min-height: 0;
+            }
+            /* Sidebar: fixed height content, no inner scroll */
             .modal-left {
                 width: 100% !important;
-                max-height: 42vh;
-                overflow-y: auto;
+                max-height: none !important;
+                flex: 0 0 auto;
+                overflow-x: hidden;
+                overflow-y: visible;
+                flex-direction: column;
+                padding: 8px max(16px, env(safe-area-inset-left)) 10px max(16px, env(safe-area-inset-right)) !important;
+                gap: 0 !important;
+                background: linear-gradient(180deg, #0d4533 0%, #0b3d2b 50%, #082f22 100%);
+                border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+            }
+            .modal-left-scroll {
+                flex: none;
+                min-height: unset;
+                gap: 8px;
+                padding: 0 0 2px;
+                overflow-x: hidden;
+                overflow-y: hidden;
+            }
+            .modal-sidebar-intro .modal-sheet-kicker {
+                display: inline-block;
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: #a7f3d0;
+                margin-bottom: 6px;
+                padding-bottom: 3px;
+                border-bottom: 2px solid rgba(52, 211, 153, 0.35);
+            }
+            .modal-section-label {
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: rgba(209, 250, 229, 0.8);
+                margin-bottom: 8px;
+            }
+            #modal-selected-summary {
+                border: 1px solid rgba(110, 231, 183, 0.2);
+                background: rgba(6, 40, 28, 0.5);
+                border-radius: 12px;
+            }
+            .modal-calendar-legend {
+                margin-top: 0;
+                padding: 8px 10px;
+                gap: 6px 12px;
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                align-items: center;
+                background: rgba(0, 0, 0, 0.12);
+                border-radius: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.06);
+            }
+            .modal-calendar-legend > div {
+                font-size: 10px;
+                color: rgba(209, 250, 229, 0.85);
+            }
+            #month-jump-list {
+                display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
-                padding: 20px 16px !important;
-                gap: 16px !important;
+                gap: 6px;
+                max-height: none;
+                overflow: visible;
             }
-            .modal-left > div:first-child { flex: 1 1 100%; }
-            #modal-selected-summary { flex: 1 1 140px; }
-            .modal-left > div:nth-child(3) { flex: 1 1 160px; max-height: 120px; overflow-y: auto; }
-            .modal-left .mt-auto { margin-top: 0 !important; flex: 1 1 100%; }
-            #close-modal { flex: 1 1 100%; }
+            .modal-jump-btn {
+                flex: 1 1 auto;
+                min-width: 0;
+                min-height: 34px;
+                padding: 6px 8px !important;
+                border-radius: 8px !important;
+                font-size: 9px !important;
+                letter-spacing: 0.04em !important;
+            }
+            .modal-left-footer {
+                margin-top: 0;
+                padding: 12px max(20px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-right));
+                border-top: 1px solid rgba(11, 61, 43, 0.12);
+                background: #fafaf9;
+            }
+            .modal-close-btn {
+                width: 100%;
+                min-height: 48px;
+                padding: 12px 18px;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                background: #ecfdf5;
+                color: #0b3d2b;
+                border: 1px solid rgba(11, 61, 43, 0.12);
+            }
+            .modal-close-btn:hover {
+                background: #d1fae5;
+                color: #082f22;
+            }
+            .modal-close-btn:active {
+                background: #a7f3d0;
+            }
             .modal-right {
-                max-height: 48vh;
-                min-height: 180px;
-                padding: 16px !important;
-            }
-        }
-        @media (min-width: 768px) {
-            #full-calendar-modal.open .modal-inner {
-                transform: scale(1) translateY(0);
+                flex: 1 1 auto;
+                min-height: 0;
+                max-height: none;
+                padding: 12px max(16px, env(safe-area-inset-left)) 12px max(16px, env(safe-area-inset-right)) !important;
+                background: #fafaf9;
             }
         }
 
-        /* Left panel of modal */
+        @media (min-width: 768px) {
+            #full-calendar-modal.open .modal-inner {
+                transform: scale(1) translateY(0) translateZ(0);
+            }
+        }
+
+        /* Tablet: slimmer sidebar so the grid stays readable */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .modal-inner {
+                width: min(100%, 860px);
+                max-height: min(92vh, 92dvh, 100svh);
+            }
+            .modal-left {
+                width: clamp(168px, 24vw, 216px);
+                padding: 22px 16px 18px;
+                gap: 0;
+            }
+            .modal-right {
+                padding: 22px 18px 20px;
+            }
+        }
+
+        /* Large desktop: comfortable padding */
+        @media (min-width: 1280px) {
+            .modal-right {
+                padding: 32px 32px 28px;
+            }
+        }
+
+        /* Phones / small devices in landscape: side-by-side (calendar gets most width) */
+        @media (max-width: 926px) and (max-height: 480px) and (orientation: landscape) {
+            .modal-inner::before {
+                display: none;
+            }
+            #full-calendar-modal {
+                align-items: center;
+                justify-content: center;
+                padding: max(4px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+            }
+            .modal-inner {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                max-width: none;
+                height: min(calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)), 100dvh);
+                max-height: min(calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)), 100dvh);
+                border-radius: 14px;
+                transform: none;
+                padding-bottom: 0;
+            }
+            #full-calendar-modal.open .modal-inner {
+                transform: none;
+            }
+            .modal-body {
+                flex-direction: row;
+                flex: 1 1 auto;
+                min-height: 0;
+            }
+            .modal-left {
+                width: min(158px, 34vw) !important;
+                max-height: none !important;
+                height: auto;
+                align-self: flex-start;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                padding: 8px 10px 8px !important;
+                gap: 0 !important;
+                overflow: visible;
+            }
+            .modal-left-scroll {
+                flex: none !important;
+                min-height: unset !important;
+                gap: 6px;
+                padding-bottom: 4px;
+                overflow-x: hidden;
+                overflow-y: hidden;
+            }
+            .modal-sidebar-intro { flex: 0 0 auto !important; }
+            #modal-selected-summary {
+                flex: 0 0 auto !important;
+                padding: 10px !important;
+                min-width: 0;
+            }
+            #modal-selected-text {
+                font-size: 11px !important;
+                line-height: 1.35;
+                word-break: break-word;
+            }
+            .modal-month-jump {
+                flex: 0 0 auto !important;
+                min-height: unset;
+                max-height: none;
+            }
+            #month-jump-list {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                max-height: none;
+                gap: 4px;
+                overflow: visible;
+            }
+            #month-jump-list button {
+                flex: 1 1 0 !important;
+                min-width: 0 !important;
+                width: auto;
+                text-align: center !important;
+                padding: 5px 4px !important;
+                font-size: 9px !important;
+            }
+            .modal-left .modal-calendar-legend {
+                flex: 0 0 auto !important;
+                margin-top: 4px !important;
+            }
+            .modal-left .modal-calendar-legend > div {
+                font-size: 10px;
+            }
+            .modal-left-footer {
+                padding: 8px 12px max(10px, env(safe-area-inset-bottom));
+                margin: 0;
+                border-top: 1px solid rgba(11, 61, 43, 0.12);
+                background: #fafaf9;
+            }
+            .modal-close-btn {
+                flex: 0 0 auto !important;
+                margin: 0;
+                min-height: 44px;
+                padding: 10px 12px;
+                border-radius: 8px;
+                font-size: 13px;
+            }
+            .modal-right {
+                flex: 1 1 0%;
+                min-width: 0 !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                height: auto;
+                align-self: stretch;
+                padding: 10px 12px 12px !important;
+            }
+        }
+
+        /* Sidebar: brand emerald — content-sized, never an internal scroll area */
         .modal-left {
-            width: 220px;
+            width: 228px;
             flex-shrink: 0;
-            background: #0b3d2b;
-            padding: 32px 24px;
+            min-width: 0;
+            background: linear-gradient(180deg, #0c4230 0%, #0b3d2b 45%, #0a3627 100%);
+            padding: 18px 14px 14px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 0;
+            border-right: 1px solid rgba(16, 185, 129, 0.12);
+            overflow-x: hidden;
+            overflow-y: visible;
+        }
+
+        .modal-left-scroll {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 0;
+            flex: none;
+            min-height: unset;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            padding-bottom: 2px;
+        }
+
+        .modal-left .modal-sidebar-intro h2 {
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+        .modal-left .modal-sidebar-intro p {
+            font-size: 10px;
+            line-height: 1.35;
+            margin-top: 6px;
+        }
+        .modal-left #modal-selected-summary {
+            padding: 8px 10px;
+        }
+        .modal-left #modal-selected-summary .text-xs {
+            font-size: 0.75rem;
+        }
+        .modal-selected-text-clamp {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+
+        .modal-sheet-kicker {
+            display: block;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #6ee7b7;
+            margin-bottom: 6px;
+        }
+
+        .modal-section-label {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(209, 250, 229, 0.9);
+            margin-bottom: 5px;
+        }
+
+        #month-jump-list {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .modal-jump-btn {
+            flex: 1 1 0;
+            min-width: 0;
+            width: auto;
+            margin: 0;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #ecfdf5;
+            padding: 6px 4px;
+            border-radius: 7px;
+            background: rgba(6, 78, 59, 0.45);
+            border: 1px solid rgba(110, 231, 183, 0.2);
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .modal-jump-btn:hover {
+            background: rgba(5, 150, 105, 0.35);
+            border-color: rgba(167, 243, 208, 0.4);
+            color: #fff;
+        }
+
+        .modal-calendar-legend {
+            margin-top: 0;
+            padding-top: 6px;
+            border-top: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        .modal-left-footer {
+            flex-shrink: 0;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 0;
+            padding: 16px 26px max(16px, env(safe-area-inset-bottom));
+            border-top: 1px solid rgba(11, 61, 43, 0.12);
+            background: #fafaf9;
+        }
+
+        .modal-close-btn {
+            flex: 0 0 auto;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            min-height: 46px;
+            padding: 12px 16px;
+            margin: 0;
+            border-radius: 10px;
+            background: #ecfdf5;
+            color: #0b3d2b;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            border: 1px solid rgba(11, 61, 43, 0.12);
+            display: block;
+            text-align: center;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .modal-close-btn:hover {
+            background: #d1fae5;
+            color: #082f22;
+            border-color: rgba(11, 61, 43, 0.18);
+        }
+        .modal-close-btn:active {
+            background: #a7f3d0;
+        }
+        .modal-close-btn:focus-visible {
+            outline: 2px solid #6ee7b7;
+            outline-offset: 2px;
         }
 
         /* Grid days */
         .cal-day-btn {
             width: 100%;
             aspect-ratio: 1;
+            min-height: 36px;
             border-radius: 10px;
             border: none;
             background: transparent;
@@ -165,8 +666,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
+            transition: background 0.15s, color 0.15s;
             position: relative;
+            touch-action: manipulation;
         }
         .cal-day-btn:hover:not(.cal-booked):not(.cal-past) {
             background: #ecfdf5;
@@ -195,18 +697,87 @@
             background: #f0fdf4;
         }
 
-        /* Scrollbar for modal body */
-        .modal-right { flex: 1; min-width: 0; padding: 28px 28px 24px; overflow-y: auto; max-height: 90vh; }
+        /* Calendar panel — horizontal swipe between months (no vertical scroll) */
+        .modal-right {
+            flex: 1;
+            min-width: 0;
+            min-height: 0;
+            padding: 26px 26px 22px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #fafaf9;
+        }
+
+        #full-grid-container.modal-calendar-swiper {
+            display: flex;
+            flex-direction: row;
+            flex: 1 1 auto;
+            min-height: 0;
+            min-width: 0;
+            width: 100%;
+            align-items: stretch;
+            gap: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(11, 61, 43, 0.35) transparent;
+            touch-action: pan-x;
+        }
+        #full-grid-container.modal-calendar-swiper::-webkit-scrollbar {
+            height: 5px;
+        }
+        #full-grid-container.modal-calendar-swiper::-webkit-scrollbar-thumb {
+            background: rgba(11, 61, 43, 0.35);
+            border-radius: 999px;
+        }
+
+        .modal-cal-month-block {
+            flex: 0 0 100%;
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            box-sizing: border-box;
+            padding: 0 2px;
+        }
 
         .month-cal-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1.5px solid #f0fdf4;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e7e5e4;
+        }
+        @media (min-width: 520px) {
+            .month-cal-header { align-items: center; }
+        }
+        .month-cal-header .cal-month-title {
+            font-size: clamp(14px, 3.8vw, 16px);
+            font-weight: 700;
+            color: #1c1917;
+            min-width: 0;
+            line-height: 1.25;
+        }
+        .month-cal-header .cal-month-badge {
+            font-size: clamp(9px, 2.5vw, 11px);
+            font-weight: 600;
+            color: #065f46;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            padding: 4px 10px;
+            border-radius: 999px;
+            max-width: 100%;
+            text-align: center;
+            line-height: 1.2;
         }
         .cal-7-grid {
             display: grid;
@@ -216,19 +787,26 @@
         .cal-day-labels { margin-bottom: 4px; }
         .cal-dow-label {
             text-align: center;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 700;
             color: #a8a29e;
             padding: 4px 0;
         }
+        @media (min-width: 360px) {
+            .cal-dow-label { font-size: 9px; }
+        }
         @media (min-width: 400px) {
             .cal-dow-label { font-size: 10px; }
         }
-        .cal-empty-cell { min-height: 32px; height: 36px; }
+        .cal-empty-cell { min-height: 30px; height: 34px; }
         @media (max-width: 420px) {
             .cal-7-grid { gap: 2px; }
-            .cal-day-btn { font-size: 11px; min-height: 32px; padding: 0 1px; }
-            .cal-empty-cell { height: 32px; min-height: 28px; }
+            .cal-day-btn { font-size: 11px; min-height: 36px; padding: 0 1px; }
+            .cal-empty-cell { height: 30px; min-height: 28px; }
+        }
+        @media (max-width: 340px) {
+            .cal-dow-label { font-size: 7px; padding: 2px 0; }
+            .cal-day-btn { font-size: 10px; min-height: 34px; border-radius: 8px; }
         }
 
         /* Trust badges */
@@ -575,9 +1153,9 @@
                     </div>
 
                     <!-- Mini calendar strip -->
-                    <div class="mb-1">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">Next 14 Days — scroll to browse</p>
-                        <div id="mini-calendar" class="no-scrollbar"></div>
+                    <div class="mini-calendar-wrap mb-1">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3 px-0.5">Next 14 days — swipe or scroll to browse</p>
+                        <div id="mini-calendar" class="no-scrollbar" role="list" aria-label="Selectable dates for the next two weeks"></div>
                     </div>
 
                     <!-- Legend + button row -->
@@ -706,56 +1284,54 @@
 </section>
 
 
-<!-- ===== LANDSCAPE MODAL CALENDAR ===== -->
-<div id="full-calendar-modal">
+<!-- ===== FULL CALENDAR MODAL — sidebar | grid (stacked on mobile) ===== -->
+<div id="full-calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
     <div class="modal-inner">
 
-        <!-- LEFT PANEL -->
-        <div class="modal-left">
-            <div>
-                <p class="text-emerald-400 text-[10px] font-black uppercase tracking-[0.25em] mb-1">Pristine Touch</p>
-                <h2 class="text-white text-xl font-bold serif-font leading-tight">Pick Your Date</h2>
-                <p class="text-emerald-300 text-xs mt-2 leading-relaxed">60-day booking window. Booked slots are crossed out.</p>
-            </div>
-
-            <!-- Selected summary -->
-            <div id="modal-selected-summary" class="bg-emerald-900/60 rounded-xl p-4">
-                <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-1">Selected</p>
-                <p id="modal-selected-text" class="text-white text-sm font-bold">—</p>
-            </div>
-
-            <!-- Month jump buttons -->
-            <div>
-                <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-2">Jump to Month</p>
-                <div id="month-jump-list" class="space-y-1"></div>
-            </div>
-
-            <!-- Legend -->
-            <div class="mt-auto space-y-2">
-                <div class="flex items-center gap-2 text-xs text-emerald-200">
-                    <span class="w-4 h-4 rounded-md bg-emerald-800 flex items-center justify-center">
-                        <svg class="w-2.5 h-2.5 text-emerald-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    </span>
-                    Selected date
+        <div class="modal-body">
+        <aside class="modal-left" aria-label="Booking sidebar">
+            <div class="modal-left-scroll">
+                <div class="modal-sidebar-intro min-w-0">
+                    <span class="modal-sheet-kicker">Pristine Touch</span>
+                    <h2 id="calendar-modal-title" class="text-white text-base font-bold serif-font leading-tight tracking-tight">Pick your date</h2>
+                    <p class="text-emerald-200 text-[10px] mt-1.5 leading-snug opacity-90">Next 60 days. Swipe sideways for other months. Crossed-out = unavailable.</p>
                 </div>
-                <div class="flex items-center gap-2 text-xs text-emerald-200">
-                    <span class="w-4 h-4 rounded-md border border-emerald-400 bg-transparent"></span>
-                    Today
+
+                <div id="modal-selected-summary" class="rounded-lg p-2.5 min-w-0 border border-emerald-400/20 bg-emerald-950/40">
+                    <p class="text-[8px] text-emerald-400 uppercase tracking-widest font-bold mb-0.5">Selected</p>
+                    <p id="modal-selected-text" class="text-white text-xs font-semibold leading-snug break-words modal-selected-text-clamp">—</p>
                 </div>
-                <div class="flex items-center gap-2 text-xs text-emerald-200">
-                    <span class="w-4 h-4 rounded-md bg-emerald-900/40 text-stone-500 flex items-center justify-center text-[9px] line-through">12</span>
-                    Booked
+
+                <div class="modal-month-jump min-w-0">
+                    <p class="modal-section-label">Jump to month</p>
+                    <div id="month-jump-list"></div>
+                </div>
+
+                <div class="modal-calendar-legend flex flex-row flex-wrap gap-x-3 gap-y-2 items-center">
+                    <div class="flex items-center gap-2.5 text-[11px] text-emerald-100/90">
+                        <span class="w-3.5 h-3.5 shrink-0 rounded bg-[#0b3d2b] ring-1 ring-emerald-400/50" aria-hidden="true"></span>
+                        <span>Selected</span>
+                    </div>
+                    <div class="flex items-center gap-2.5 text-[11px] text-emerald-100/90">
+                        <span class="w-3.5 h-3.5 shrink-0 rounded border-2 border-emerald-400 bg-transparent" aria-hidden="true"></span>
+                        <span>Today</span>
+                    </div>
+                    <div class="flex items-center gap-2.5 text-[11px] text-emerald-100/90">
+                        <span class="w-3.5 h-3.5 shrink-0 rounded bg-stone-600/30 text-[9px] line-through flex items-center justify-center text-emerald-100/50" aria-hidden="true">0</span>
+                        <span>Unavailable</span>
+                    </div>
                 </div>
             </div>
+        </aside>
 
-            <button type="button" id="close-modal" class="w-full py-2.5 bg-emerald-900 hover:bg-emerald-800 text-emerald-200 text-sm font-bold rounded-xl transition">Close</button>
-        </div>
-
-        <!-- RIGHT PANEL: scrollable month grids -->
         <div class="modal-right" id="modal-right-panel">
-            <div id="full-grid-container"></div>
+            <div id="full-grid-container" class="modal-calendar-swiper" role="region" aria-label="Months" tabindex="0"></div>
+        </div>
         </div>
 
+        <div class="modal-left-footer">
+            <button type="button" id="close-modal" class="modal-close-btn" aria-label="Close calendar">Done</button>
+        </div>
     </div>
 </div>
 
@@ -875,25 +1451,40 @@
             const pill = document.createElement('div');
             pill.className = 'date-pill' + (booked ? ' booked' : '') + (isToday ? ' today-pill' : '');
             pill.dataset.date = ds;
+            pill.setAttribute('role', 'listitem');
             pill.innerHTML = `
-                <span class="day-name" style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:${booked?'#d4d4d4':'#059669'};margin-bottom:2px;">${d.toLocaleString('default',{weekday:'short'}).toUpperCase()}</span>
-                <span style="font-size:22px;font-weight:900;line-height:1;color:${booked?'#d4d4d4':'#1c1917'};">${d.getDate()}</span>
-                <span class="month-label" style="font-size:9px;font-weight:700;opacity:0.5;text-transform:uppercase;margin-top:2px;">${d.toLocaleString('default',{month:'short'})}</span>
+                <span class="date-pill-day">${d.toLocaleString('default',{weekday:'short'}).toUpperCase()}</span>
+                <span class="date-pill-num">${d.getDate()}</span>
+                <span class="date-pill-month">${d.toLocaleString('default',{month:'short'})}</span>
             `;
             if (!booked) {
                 pill.onclick = () => selectDate(ds, fmtLong(d));
             }
             wrap.appendChild(pill);
         }
-        // drag-to-scroll
-        let isDown = false, startX, scrollLeft;
-        wrap.addEventListener('mousedown', e => { isDown=true; startX=e.pageX-wrap.offsetLeft; scrollLeft=wrap.scrollLeft; });
-        wrap.addEventListener('mouseleave', () => isDown=false);
-        wrap.addEventListener('mouseup', () => isDown=false);
-        wrap.addEventListener('mousemove', e => { if(!isDown) return; e.preventDefault(); wrap.scrollLeft = scrollLeft-(e.pageX-wrap.offsetLeft-startX); });
+        // drag-to-scroll (desktop); touch uses native horizontal scroll — rAF-throttled for smoother frames
+        let isDown = false, startX = 0, scrollLeft0 = 0, dragRaf = 0, moveX = 0;
+        wrap.addEventListener('mousedown', function (e) {
+            isDown = true;
+            startX = e.clientX;
+            scrollLeft0 = wrap.scrollLeft;
+        });
+        wrap.addEventListener('mouseleave', function () { isDown = false; });
+        wrap.addEventListener('mouseup', function () { isDown = false; });
+        wrap.addEventListener('mousemove', function (e) {
+            if (!isDown) return;
+            e.preventDefault();
+            moveX = e.clientX;
+            if (dragRaf) return;
+            dragRaf = requestAnimationFrame(function () {
+                dragRaf = 0;
+                if (!isDown) return;
+                wrap.scrollLeft = scrollLeft0 - (moveX - startX);
+            });
+        });
     }
 
-    function selectDate(ds, label) {
+    function selectDate(ds, label, closeModalAfter) {
         selectedDateStr = ds;
         document.getElementById('schedule-input').value = ds;
 
@@ -920,7 +1511,7 @@
             if (b.dataset.date === ds) b.classList.add('cal-selected');
         });
 
-        closeModal();
+        if (closeModalAfter !== false) closeModal();
     }
 
     // ---- FULL MODAL CALENDAR ----
@@ -940,6 +1531,9 @@
             cur.setMonth(cur.getMonth()+1);
         }
 
+        const monthFrag = document.createDocumentFragment();
+        const jumpFrag = document.createDocumentFragment();
+
         months.forEach((monthStart, mi) => {
             const monthId = 'month-' + mi;
             const monthName = fmtMonthYear(monthStart);
@@ -947,26 +1541,27 @@
             // Jump button
             const jBtn = document.createElement('button');
             jBtn.type = 'button';
-            jBtn.textContent = monthStart.toLocaleString('default',{month:'long'});
-            jBtn.className = 'w-full text-left text-xs font-bold text-emerald-200 hover:text-white px-3 py-1.5 rounded-lg hover:bg-emerald-800/60 transition';
+            jBtn.textContent = monthStart.toLocaleString('default', { month: 'short' });
+            jBtn.title = monthStart.toLocaleString('default', { month: 'long', year: 'numeric' });
+            jBtn.className = 'modal-jump-btn';
             jBtn.onclick = () => {
-                document.getElementById(monthId).scrollIntoView({behavior:'smooth', block:'start'});
+                const el = document.getElementById(monthId);
+                const swiper = document.getElementById('full-grid-container');
+                if (el && swiper) swiper.scrollTo({ left: el.offsetLeft, behavior: 'smooth' });
             };
-            jumpList.appendChild(jBtn);
+            jumpFrag.appendChild(jBtn);
 
             // Month block
             const block = document.createElement('div');
             block.id = monthId;
-            block.style.marginBottom = '28px';
+            block.className = 'modal-cal-month-block min-w-0';
 
             // Month header
             const mhdr = document.createElement('div');
             mhdr.className = 'month-cal-header';
             mhdr.innerHTML = `
-                <span style="font-size:16px;font-weight:700;color:#1c1917;">${monthName}</span>
-                <span style="font-size:11px;font-weight:600;color:#a78bfa;background:#f5f3ff;padding:2px 10px;border-radius:20px;">
-                    ${getDaysInMonth(monthStart, end)} bookable days
-                </span>
+                <span class="cal-month-title">${monthName}</span>
+                <span class="cal-month-badge">${getDaysInMonth(monthStart, end)} bookable days</span>
             `;
             block.appendChild(mhdr);
 
@@ -1016,14 +1611,17 @@
                 btn.className = cls;
 
                 if (!isPast && !isBooked && !isBeyond) {
-                    btn.onclick = () => selectDate(ds, fmtLong(d));
+                    btn.onclick = () => selectDate(ds, fmtLong(d), false);
                 }
 
                 grid.appendChild(btn);
             }
             block.appendChild(grid);
-            container.appendChild(block);
+            monthFrag.appendChild(block);
         });
+
+        jumpList.appendChild(jumpFrag);
+        container.appendChild(monthFrag);
     }
 
     function getDaysInMonth(monthStart, endDate) {
@@ -1041,6 +1639,17 @@
         const modal = document.getElementById('full-calendar-modal');
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                const swiper = document.getElementById('full-grid-container');
+                if (!swiper) return;
+                const sel = swiper.querySelector('.cal-day-btn.cal-selected');
+                const block = sel
+                    ? sel.closest('.modal-cal-month-block')
+                    : swiper.querySelector('.modal-cal-month-block');
+                if (block) swiper.scrollLeft = block.offsetLeft;
+            });
+        });
     }
     function closeModal() {
         document.getElementById('full-calendar-modal').classList.remove('open');
@@ -1049,8 +1658,26 @@
 
     document.getElementById('open-full-calendar').onclick = openModal;
     document.getElementById('close-modal').onclick = closeModal;
+
+    (function initCalendarSwiperWheel() {
+        var swiper = document.getElementById('full-grid-container');
+        if (!swiper) return;
+        swiper.addEventListener('wheel', function (e) {
+            var modal = document.getElementById('full-calendar-modal');
+            if (!modal || !modal.classList.contains('open')) return;
+            if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+            e.preventDefault();
+            swiper.scrollLeft += e.deltaY;
+        }, { passive: false });
+    })();
     document.getElementById('full-calendar-modal').addEventListener('click', function(e) {
         if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        const modal = document.getElementById('full-calendar-modal');
+        if (modal && modal.classList.contains('open')) closeModal();
     });
 
     buildMiniCalendar();
