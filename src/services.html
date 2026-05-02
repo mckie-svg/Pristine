@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Our Services | Professional Cleaning Solutions</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <link rel="stylesheet" href="../style.css">
     <link rel="shortcut icon" href="../src/img/icon.jpeg" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -475,28 +474,33 @@
 </section>
 
 
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+<script src="../index.js" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const swiper = new Swiper('.mySwiper', {
+        if (typeof Swiper === 'undefined') return;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        new Swiper('.mySwiper', {
             slidesPerView: 1,
-            spaceBetween: 30,
+            spaceBetween: 24,
+            speed: 450,
             loop: true,
-            autoplay: {
-                delay: 2000,
+            autoplay: reduceMotion ? false : {
+                delay: 2800,
                 disableOnInteraction: false,
+                pauseOnMouseEnter: true
             },
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true,
             },
             breakpoints: {
-                768: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
+                768: { slidesPerView: 2, spaceBetween: 28 },
+                1024: { slidesPerView: 3, spaceBetween: 30 },
             },
         });
     });
 </script>
-<script src="../index.js"></script>
 
 </body>
 </html>

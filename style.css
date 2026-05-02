@@ -1,4 +1,42 @@
 /* ==========================================================================
+   0. PERFORMANCE & DEVICE SMOOTHNESS
+   ========================================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .animate-infinite-slide {
+        animation: none !important;
+    }
+
+    .hero-bg-fade,
+    .hero-bg-fade img {
+        animation: none !important;
+    }
+
+    .animate-reveal {
+        animation: none !important;
+        opacity: 1 !important;
+    }
+}
+
+body {
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+}
+
+/* ==========================================================================
    1. GLOBAL STYLES & SCROLLBAR
    ========================================================================== */
 ::-webkit-scrollbar {
@@ -44,6 +82,11 @@
 /* Closed drawer must not sit on top of the hamburger (hit-testing / overlap bugs on some mobile browsers) */
 #mobile-menu.translate-x-full {
     pointer-events: none;
+    will-change: auto;
+}
+
+#mobile-menu:not(.translate-x-full) {
+    will-change: transform;
 }
 
 #nav-bar-row.nav-hidden {
@@ -137,10 +180,12 @@
     display: flex;
     width: max-content;
     animation: infinite-slide 30s linear infinite;
+    will-change: transform;
 }
 
 .pause-on-hover:hover .animate-infinite-slide {
     animation-play-state: paused;
+    will-change: auto;
 }
 
 .slider-mask {
@@ -151,7 +196,7 @@
 .slider-img {
     filter: grayscale(30%);
     opacity: 0.85;
-    transition: all 0.4s ease;
+    transition: transform 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
 }
 
 .slider-img:hover {
