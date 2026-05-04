@@ -1020,69 +1020,89 @@
                             Quick tips
                         </button>
                     </legend>
+                
+                    <!-- PROMOTIONAL BANNER -->
+                    <div class="mb-5 flex items-center gap-3 p-3 bg-emerald-600 rounded-xl text-white shadow-sm border border-emerald-500/50">
+                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/20">
+                            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </span>
+                        <p class="text-xs sm:text-sm font-medium leading-snug">
+                            <strong>Limited Offer:</strong> All cleaning packages include <span class="underline decoration-emerald-300 underline-offset-2">FREE fogging disinfection</span> to ensure a healthier, safer space for you.
+                        </p>
+                    </div>
+                
                     <p id="cleaning-types-help-panel" class="hidden text-xs text-stone-600 bg-white border border-emerald-100 rounded-xl p-4 mb-4 leading-relaxed">
                         Choose every service you need — we’ll bundle them into one quote. If you pick <strong>Iba pa</strong>, tell us briefly what you have in mind so our team can follow up accurately.
                     </p>
-                    <p id="services-check-error" class="hidden text-sm font-semibold text-red-600 mb-3 flex items-center gap-2" role="alert">
-                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                        Please select at least one cleaning service.
-                    </p>
+                
                     <div class="service-types-scroll space-y-2 sm:space-y-3 pr-1">
-                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                        
+                        <!-- Service Card: Deep Cleaning -->
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 min-w-0">
                             <input type="checkbox" name="cleaning_services[]" value="deep_cleaning" class="peer sr-only">
-                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
-                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green">
+                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             </span>
                             <div class="min-w-0 flex-1">
-                                <span class="font-bold text-stone-900 text-sm">Deep Cleaning</span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="font-bold text-stone-900 text-sm">Deep Cleaning</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 tracking-tighter shrink-0">+ Free Fogging</span>
+                                </div>
                                 <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Floor scrubbing/polishing, wall and ceiling cleaning, window glass cleaning, high dusting)</p>
                             </div>
                         </label>
-                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                
+                        <!-- Service Card: Commercial -->
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm min-w-0">
                             <input type="checkbox" name="cleaning_services[]" value="commercial_establishment" class="peer sr-only">
-                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
-                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all peer-checked:bg-pristine-green">
+                                <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             </span>
                             <div class="min-w-0 flex-1">
-                                <span class="font-bold text-stone-900 text-sm">Commercial / Establishment Cleaning</span>
-                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Office workspace cleaning, restaurant cleaning, dining area cleaning, classroom cleaning, clinic sanitation cleaning, hotel room cleaning, hallway and lobby cleaning)</p>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="font-bold text-stone-900 text-sm">Commercial / Establishment Cleaning</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 tracking-tighter shrink-0">+ Free Fogging</span>
+                                </div>
+                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Office workspace cleaning, restaurant cleaning, classroom cleaning, clinic sanitation)</p>
                             </div>
                         </label>
-                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                
+                        <!-- Service Card: General Cleaning -->
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm min-w-0">
                             <input type="checkbox" name="cleaning_services[]" value="general_cleaning" class="peer sr-only">
-                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
-                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all peer-checked:bg-pristine-green">
+                                <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             </span>
                             <div class="min-w-0 flex-1">
-                                <span class="font-bold text-stone-900 text-sm">General Cleaning</span>
-                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Floor sweeping and mopping, dusting of furniture and fixtures, trash removal, restroom cleaning)</p>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="font-bold text-stone-900 text-sm">General Cleaning</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 tracking-tighter shrink-0">+ Free Fogging</span>
+                                </div>
+                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Floor sweeping and mopping, dusting of furniture, trash removal, restroom cleaning)</p>
                             </div>
                         </label>
-                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
-                            <input type="checkbox" name="cleaning_services[]" value="sanitation_disinfection" class="peer sr-only">
-                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
-                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                            </span>
-                            <div class="min-w-0 flex-1">
-                                <span class="font-bold text-stone-900 text-sm">Sanitation / Disinfection</span>
-                                <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Fogging disinfection, sanitizing high-touch areas, restroom sanitation, air disinfection)</p>
-                            </div>
-                        </label>
-                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-500 has-[:focus-visible]:ring-offset-2 min-w-0">
+                
+                        <!-- Specialized Cleaning (Already includes disinfection, but kept for consistency) -->
+                        <label class="group relative flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white cursor-pointer transition-all duration-200 hover:border-emerald-300 hover:shadow-md has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 has-[:checked]:shadow-sm min-w-0">
                             <input type="checkbox" name="cleaning_services[]" value="specialized_cleaning" class="peer sr-only">
-                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
-                                <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all peer-checked:bg-pristine-green">
+                                <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             </span>
                             <div class="min-w-0 flex-1">
-                                <span class="font-bold text-stone-900 text-sm">Specialized Cleaning</span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="font-bold text-stone-900 text-sm">Specialized Cleaning</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 tracking-tighter shrink-0">+ Free Fogging</span>
+                                </div>
                                 <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">(Move-in / Move-out cleaning, post construction cleaning, event cleaning, carpet cleaning)</p>
                             </div>
                         </label>
+                
+                        <!-- Other -->
                         <div class="rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white p-3 sm:p-4 transition-all has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 min-w-0">
                             <label class="group flex gap-4 cursor-pointer">
                                 <input type="checkbox" name="cleaning_services[]" value="other" id="cleaning-other" class="peer sr-only">
-                                <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green peer-checked:[&_svg]:opacity-100">
-                                    <svg class="h-3 w-3 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green">
+                                    <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                 </span>
                                 <div class="min-w-0 flex-1">
                                     <span class="font-bold text-stone-900 text-sm">Iba pa <span class="font-normal text-stone-500">(Others)</span></span>
@@ -1092,7 +1112,6 @@
                             <div id="other-cleaning-wrap" class="hidden mt-4 pl-0 sm:pl-9 border-t border-stone-100 pt-4">
                                 <label for="cleaning_other_details" class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Describe your other service needs <span class="text-red-500">*</span></label>
                                 <textarea id="cleaning_other_details" name="cleaning_other_details" rows="3" placeholder="e.g. upholstery, industrial kitchen, specific schedule…" class="w-full p-4 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm resize-none"></textarea>
-                                <p id="other-details-error" class="hidden text-xs font-semibold text-red-600 mt-2" role="alert">Please add a short description when “Iba pa” is selected.</p>
                             </div>
                         </div>
                     </div>
@@ -1102,39 +1121,170 @@
                 <fieldset class="min-w-0">
                     <legend class="flex flex-wrap items-center gap-2 sm:gap-3 w-full mb-6 pb-3 border-b border-stone-100">
                         <span class="step-num text-sm">03</span>
-                        <span class="text-sm sm:text-base font-bold text-stone-800">Property Details</span>
+                        <span class="text-sm sm:text-base font-bold text-stone-800">Property Details & Package</span>
                     </legend>
-                    <div class="space-y-5">
+                
+                    <div class="space-y-6">
+                        <!-- Service Address -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Service Address <span class="text-red-400">*</span></label>
                             <input type="text" placeholder="Street, Barangay, City, Landmark" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm" required>
                         </div>
+                
+                        <!-- Property Grid -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Property Type</label>
-                                <select class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition cursor-pointer text-sm text-stone-700">
-                                    <option>Residential</option>
-                                    <option>Commercial</option>
-                                    <option>Rental Property</option>
-                                    <option>Clinic / Hospital</option>
-                                    <option>Hotel / Lodging</option>
+                                <select id="propType" onchange="updateAllPrices()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition cursor-pointer text-sm text-stone-700">
+                                    <optgroup label="Commercial & Establishment">
+                                        <option value="commercial">Office</option>
+                                        <option value="commercial">Commercial Space</option>
+                                        <option value="commercial">Hotel</option>
+                                        <option value="commercial">Pension House</option>
+                                        <option value="commercial">Clinic</option>
+                                        <option value="commercial">Airbnb</option>
+                                        <option value="commercial">Restaurant</option>
+                                        <option value="commercial">Café</option>
+                                    </optgroup>
+                                    <optgroup label="Residential">
+                                        <option value="residential">Apartment</option>
+                                        <option value="residential" selected>Boarding House</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Approx. Area (sqm)</label>
-                                <input type="number" placeholder="e.g. 50" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm">
+                                <input type="number" id="sqmInput" oninput="updateAllPrices()" value="30" min="1" placeholder="e.g. 50" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">No. of Rooms</label>
                                 <input type="number" placeholder="e.g. 3" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm">
                             </div>
                         </div>
+                
+                        <!-- Packages -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Cleaning Packages</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="pkg" value="basic" checked onchange="updateAllPrices()" class="peer hidden">
+                                    <div class="p-4 border-2 border-stone-200 rounded-2xl transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50 group-hover:border-emerald-100">
+                                        <span class="block font-bold text-stone-700 text-sm">Basic Clean</span>
+                                        <span id="price-basic" class="block text-emerald-600 font-bold text-lg mt-1">₱0</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="pkg" value="standard" onchange="updateAllPrices()" class="peer hidden">
+                                    <div class="p-4 border-2 border-stone-200 rounded-2xl transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50 group-hover:border-emerald-100">
+                                        <span class="block font-bold text-stone-700 text-sm">Standard Clean</span>
+                                        <span id="price-standard" class="block text-emerald-600 font-bold text-lg mt-1">₱0</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="pkg" value="premium" onchange="updateAllPrices()" class="peer hidden">
+                                    <div class="p-4 border-2 border-stone-200 rounded-2xl transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50 group-hover:border-emerald-100">
+                                        <span class="block font-bold text-stone-700 text-sm">Premium Clean</span>
+                                        <span id="price-premium" class="block text-emerald-600 font-bold text-lg mt-1">₱0</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                
+                        <!-- Add-Ons -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Add-On Services</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                    <input type="checkbox" name="addon" value="500" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                    <span class="text-sm text-stone-600">Post-construction (+₱500)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                    <input type="checkbox" name="addon" value="400" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                    <span class="text-sm text-stone-600">Move-in/Move-out (+₱400)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                    <input type="checkbox" name="addon" value="600" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                    <span class="text-sm text-stone-600">Event Cleanup (+₱600)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                    <input type="checkbox" name="addon" value="300" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                    <span class="text-sm text-stone-600">Window Cleaning (+₱300)</span>
+                                </label>
+                            </div>
+                        </div>
+                
+                        <!-- Special Instructions -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Special Instructions</label>
-                            <textarea rows="3" placeholder="e.g. pets on site, gate code, specific areas to focus on..." class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm resize-none"></textarea>
+                            <textarea rows="3" placeholder="e.g. pets on site, gate code..." class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm resize-none"></textarea>
+                        </div>
+                
+                        <!-- ESTIMATED PRICE BOX -->
+                        <div class="p-5 bg-stone-800 rounded-2xl text-white flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <div>
+                                <span class="block text-[10px] uppercase tracking-widest text-stone-400 font-bold">Estimated Total</span>
+                                <span id="totalDisplay" class="text-3xl font-black text-emerald-400">₱0.00</span>
+                            </div>
+                            <div class="text-right sm:text-right text-xs text-stone-400 italic">
+                                *Final price may vary upon inspection
+                            </div>
                         </div>
                     </div>
                 </fieldset>
+                
+                <script>
+                    const rates = {
+                        residential: {
+                            basic: { base: 1300, extra: 200 },
+                            standard: { base: 2300, extra: 400 },
+                            premium: { base: 4000, extra: 600 }
+                        },
+                        commercial: {
+                            basic: { base: 3800, extra: 300 },
+                            standard: { base: 4800, extra: 400 },
+                            premium: { base: 5800, extra: 500 }
+                        }
+                    };
+                
+                    function calculatePackagePrice(pkgType, isCommercial, sqm) {
+                        const rateSet = isCommercial ? rates.commercial[pkgType] : rates.residential[pkgType];
+                        let total = rateSet.base;
+                        if (sqm > 30) {
+                            const additional10s = Math.ceil((sqm - 30) / 10);
+                            total += (additional10s * rateSet.extra);
+                        }
+                        return total;
+                    }
+                
+                    function updateAllPrices() {
+                        const type = document.getElementById('propType').value;
+                        const sqm = parseInt(document.getElementById('sqmInput').value) || 0;
+                        const isComm = (type === 'commercial');
+                
+                        // Update card prices
+                        const pBasic = calculatePackagePrice('basic', isComm, sqm);
+                        const pStandard = calculatePackagePrice('standard', isComm, sqm);
+                        const pPremium = calculatePackagePrice('premium', isComm, sqm);
+                
+                        document.getElementById('price-basic').innerText = '₱' + pBasic.toLocaleString();
+                        document.getElementById('price-standard').innerText = '₱' + pStandard.toLocaleString();
+                        document.getElementById('price-premium').innerText = '₱' + pPremium.toLocaleString();
+                
+                        // Calculate Final Total
+                        const selectedPkg = document.querySelector('input[name="pkg"]:checked').value;
+                        let finalTotal = calculatePackagePrice(selectedPkg, isComm, sqm);
+                
+                        // Add checkboxes
+                        document.querySelectorAll('input[name="addon"]:checked').forEach(cb => {
+                            finalTotal += parseInt(cb.value);
+                        });
+                
+                        document.getElementById('totalDisplay').innerText = '₱' + finalTotal.toLocaleString();
+                    }
+                
+                    // Run on load
+                    window.onload = updateAllPrices;
+                </script>
 
                 <!-- SECTION 4: Schedule -->
                 <fieldset class="min-w-0">
@@ -1177,7 +1327,7 @@
                     <!-- Time window -->
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Preferred Time Window</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div id="time-slots-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Morning" class="peer hidden" required>
                                 <div class="p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
@@ -1201,7 +1351,42 @@
                                     <span class="block font-bold text-stone-700 text-sm">Flexible</span>
                                     <span class="text-xs text-stone-400">Anytime works</span>
                                 </div>
+                                <!-- Time selector revealed only when Flexible is selected -->
+                                <div class="hidden peer-checked:block mt-2 px-1">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1">Start</label>
+                                            <input type="time" name="flexible_start_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-medium" title="Preferred start time">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1">End <span class="normal-case opacity-60">(Opt)</span></label>
+                                            <input type="time" name="flexible_end_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-medium" title="Optional end time">
+                                        </div>
+                                    </div>
+                                </div>
                             </label>
+                        </div>
+
+                        <!-- Confirm Button (visible after selection) -->
+                        <div id="confirm-schedule-wrap" class="hidden mt-6 text-center">
+                            <button type="button" id="confirm-schedule-btn" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-emerald-700 transition-all shadow-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                Confirm Schedule Selection
+                            </button>
+                        </div>
+
+                        <!-- Combined Summary Review -->
+                        <div id="final-schedule-review" class="hidden mt-8 p-5 bg-emerald-50 border-2 border-emerald-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-pristine-green text-white flex items-center justify-center shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-emerald-800 opacity-70">Booking Summary</p>
+                                    <p id="summary-date-time" class="font-bold text-emerald-950 text-sm sm:text-base truncate">—</p>
+                                </div>
+                            </div>
+                            <div class="text-[10px] font-bold text-emerald-600 bg-white px-3 py-1 rounded-full border border-emerald-100 self-start sm:self-center shrink-0">Confirmed Selection</div>
                         </div>
                     </div>
                 </fieldset>
@@ -1427,6 +1612,59 @@
         });
     })();
 
+    // ---- SCHEDULE SUMMARY & CONFIRMATION LOGIC ----
+    (function initScheduleSummary() {
+        const timeContainer = document.getElementById('time-slots-container');
+        const confirmWrap = document.getElementById('confirm-schedule-wrap');
+        const confirmBtn = document.getElementById('confirm-schedule-btn');
+        const summaryBox = document.getElementById('final-schedule-review');
+        const summaryText = document.getElementById('summary-date-time');
+        const flexibleStart = document.querySelector('input[name="flexible_start_time"]');
+        const flexibleEnd = document.querySelector('input[name="flexible_end_time"]');
+
+        function getFormattedTime() {
+            const selected = document.querySelector('input[name="time_slot"]:checked');
+            if (!selected) return null;
+            
+            if (selected.value === 'Flexible') {
+                const start = flexibleStart.value;
+                const end = flexibleEnd.value;
+                if (!start) return 'Flexible (Anytime)';
+                return `Flexible: ${start}${end ? ' – ' + end : ' onwards'}`;
+            }
+            
+            const labels = { 'Morning': '8:00 AM – 12:00 PM', 'Afternoon': '1:00 PM – 5:00 PM' };
+            return `${selected.value} (${labels[selected.value]})`;
+        }
+
+        function updateSummary() {
+            if (!selectedDateStr) return;
+            const timeLabel = getFormattedTime();
+            const dateLabel = document.getElementById('calendar-header-date').textContent;
+            summaryText.textContent = `${dateLabel} • ${timeLabel}`;
+            summaryBox.classList.remove('hidden');
+            confirmWrap.classList.add('hidden');
+        }
+
+        // Show confirm button when time slot is picked
+        timeContainer.addEventListener('change', () => {
+            summaryBox.classList.add('hidden'); // Hide summary if they change selection
+            confirmWrap.classList.remove('hidden');
+        });
+
+        // Also watch flexible time inputs
+        [flexibleStart, flexibleEnd].forEach(input => {
+            input.addEventListener('change', () => {
+                if (document.querySelector('input[name="time_slot"][value="Flexible"]:checked')) {
+                    summaryBox.classList.add('hidden');
+                    confirmWrap.classList.remove('hidden');
+                }
+            });
+        });
+
+        confirmBtn.addEventListener('click', updateSummary);
+    })();
+
     function fmtDateStr(d) {
         return d.toISOString().split('T')[0];
     }
@@ -1510,6 +1748,10 @@
             b.classList.remove('cal-selected');
             if (b.dataset.date === ds) b.classList.add('cal-selected');
         });
+
+        // Reset summary if date changes
+        document.getElementById('final-schedule-review').classList.add('hidden');
+        if (document.querySelector('input[name="time_slot"]:checked')) document.getElementById('confirm-schedule-wrap').classList.remove('hidden');
 
         if (closeModalAfter !== false) closeModal();
     }
