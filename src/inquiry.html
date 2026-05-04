@@ -1191,45 +1191,80 @@
                         </div>
                 
                         <!-- Add-Ons -->
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Add-On Services</label>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
-                                    <input type="checkbox" name="addon" value="500" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
-                                    <span class="text-sm text-stone-600">Post-construction (+₱500)</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
-                                    <input type="checkbox" name="addon" value="400" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
-                                    <span class="text-sm text-stone-600">Move-in/Move-out (+₱400)</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
-                                    <input type="checkbox" name="addon" value="600" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
-                                    <span class="text-sm text-stone-600">Event Cleanup (+₱600)</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
-                                    <input type="checkbox" name="addon" value="300" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
-                                    <span class="text-sm text-stone-600">Window Cleaning (+₱300)</span>
-                                </label>
-                            </div>
-                        </div>
-                
-                        <!-- Special Instructions -->
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Special Instructions</label>
-                            <textarea rows="3" placeholder="e.g. pets on site, gate code..." class="w-full p-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm resize-none"></textarea>
-                        </div>
-                
-                        <!-- ESTIMATED PRICE BOX -->
-                        <div class="p-5 bg-stone-800 rounded-2xl text-white flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="space-y-6">
+                            <!-- ADD-ON SERVICES SECTION -->
                             <div>
-                                <span class="block text-[10px] uppercase tracking-widest text-stone-400 font-bold">Estimated Total</span>
-                                <span id="totalDisplay" class="text-3xl font-black text-emerald-400">₱0.00</span>
+                                <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Add-On Services</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <!-- Standard Add-ons -->
+                                    <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                        <input type="checkbox" name="addon" value="500" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                        <span class="text-sm text-stone-600">Post-construction (+₱500)</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                        <input type="checkbox" name="addon" value="400" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                        <span class="text-sm text-stone-600">Move-in/Move-out (+₱400)</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                        <input type="checkbox" name="addon" value="600" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                        <span class="text-sm text-stone-600">Event Cleanup (+₱600)</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition">
+                                        <input type="checkbox" name="addon" value="300" onchange="updateAllPrices()" class="w-4 h-4 accent-emerald-500">
+                                        <span class="text-sm text-stone-600">Window Cleaning (+₱300)</span>
+                                    </label>
+                        
+                                    <!-- "OTHERS" TOGGLE SECTION -->
+                                    <div class="sm:col-span-2">
+                                        <!-- Hidden Checkbox that acts as the logic peer -->
+                                        <input type="checkbox" id="toggle-others" name="addon" value="0" onchange="updateAllPrices()" class="peer hidden">
+                                        
+                                        <!-- The Visual Button -->
+                                        <label for="toggle-others" class="flex items-center gap-3 p-3 bg-stone-50 border border-stone-100 rounded-xl cursor-pointer hover:bg-stone-100 transition peer-checked:border-emerald-500 peer-checked:bg-emerald-50">
+                                            <div class="w-4 h-4 border-2 border-stone-300 rounded flex items-center justify-center peer-checked:bg-emerald-500 peer-checked:border-emerald-500 bg-white">
+                                                <div class="hidden [input:checked+label_&]:block w-2 h-2 bg-emerald-600 rounded-sm"></div>
+                                            </div>
+                                            <span class="text-sm text-stone-600 font-bold">Add Others (Specify below)</span>
+                                        </label>
+                        
+                                        <!-- DYNAMIC CONTENT (Appears when Others is checked) -->
+                                        <div class="hidden peer-checked:block mt-3 space-y-3 animate-in fade-in slide-in-from-top-2">
+                                            
+                                            <!-- Negotiation Note -->
+                                            <div class="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                                                <svg class="w-4 h-4 text-blue-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <p class="text-[11px] text-blue-700 leading-tight">
+                                                    <strong>Service Note:</strong> Pricing for custom "Other" services is subject to assessment. Final rates will be negotiated and finalized during the on-site meeting or inspection.
+                                                </p>
+                                            </div>
+                        
+                                            <!-- Special Instructions Input -->
+                                            <div class="space-y-2">
+                                                <label class="block text-[10px] font-black uppercase tracking-widest text-stone-500 ml-1">Special Instructions / Details</label>
+                                                <textarea rows="3" placeholder="Please provide details of your specific requirements (e.g., upholstery, garden cleanup, specific pets on site...)" 
+                                                    class="w-full p-4 bg-white border-2 border-stone-100 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition text-sm resize-none shadow-sm text-stone-700"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-right sm:text-right text-xs text-stone-400 italic">
-                                *Final price may vary upon inspection
+                        
+                            <!-- ESTIMATED PRICE BOX -->
+                            <div class="p-5 bg-stone-800 rounded-2xl text-white flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <div>
+                                    <span class="block text-[10px] uppercase tracking-widest text-stone-400 font-bold">Estimated Total</span>
+                                    <span id="totalDisplay" class="text-3xl font-black text-emerald-400">₱0.00</span>
+                                </div>
+                                <div class="text-right text-xs text-stone-400 italic leading-snug max-w-[180px]">
+                                    *Final price may vary upon inspection
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </fieldset>
                 
                 <script>
