@@ -333,3 +333,17 @@ body {
     }
 }
 
+#booking-detail-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#booker-avatar {
+    /* Prevents image from stretching if data is slow to load */
+    aspect-ratio: 1/1;
+}
+
+/* Optional: Subtle highlight when a booked date is clicked */
+.date-pill.booked:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}

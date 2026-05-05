@@ -643,6 +643,10 @@
             color: #082f22;
             border-color: rgba(11, 61, 43, 0.18);
         }
+            .modal-close-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
         .modal-close-btn:active {
             background: #a7f3d0;
         }
@@ -695,6 +699,19 @@
         }
         .cal-day-btn.cal-in-month-range {
             background: #f0fdf4;
+        }
+        
+        .booked-avatar-sm {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            overflow: hidden;
+            z-index: 10;
         }
 
         /* Calendar panel — horizontal swipe between months (no vertical scroll) */
@@ -1341,6 +1358,7 @@
                             <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-stone-300 inline-block shrink-0"></span> Booked</span>
                         </div>
                     </div>
+                    
 
                     <input type="hidden" name="selected_date" id="schedule-input" required>
 
@@ -1515,6 +1533,18 @@
                     <p id="modal-selected-text" class="text-white text-xs font-semibold leading-snug break-words modal-selected-text-clamp">—</p>
                 </div>
 
+                <div id="booking-detail-card" class="hidden mt-4 rounded-xl p-3 bg-emerald-900/60 border border-emerald-400/30 animate-in fade-in slide-in-from-top-2">
+                    <p class="text-[8px] text-emerald-400 uppercase tracking-widest font-bold mb-2">Booked By</p>
+                    <div class="flex items-center gap-3">
+                        <img id="booker-avatar" src="" alt="Profile" class="w-10 h-10 rounded-full border border-emerald-400/50 object-cover">
+                        <div class="min-w-0">
+                            <p id="booker-name" class="text-white text-xs font-bold truncate"></p>
+                            <p class="text-emerald-300/70 text-[10px]">Confirmed Client</p>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-[10px] text-red-300 font-medium italic border-t border-emerald-400/20 pt-2 flex items-center gap-1.5"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg> Please choose another preferred date</p>
+                </div>
+
                 <div class="modal-month-jump min-w-0">
                     <p class="modal-section-label">Jump to month</p>
                     <div id="month-jump-list"></div>
@@ -1557,6 +1587,13 @@
     const today = new Date();
     today.setHours(0,0,0,0);
 
+    const mockUsers = [
+        { name: "John Dela Cruz", avatar: "https://images.unsplash.com/photo-1535711861845-07836b6d990a?w=100&h=100&fit=crop" },
+        { name: "Maria Clara", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" },
+        { name: "Andres Bonifacio", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop" },
+        { name: "Leonor Rivera", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" }
+    ];
+
     // Simulate booking data: { 'YYYY-MM-DD': ['Morning', 'Afternoon'] }
     const bookingRegistry = {};
     // Dates with only Morning booked
@@ -1566,15 +1603,20 @@
         bookingRegistry[d.toISOString().split('T')[0]] = ['Morning'];
     });
     // Dates fully booked (Morning & Afternoon)
-    [3, 7, 10, 18, 22, 28, 33, 40, 45, 50].forEach(offset => {
+    [3, 7, 10, 18, 22, 28, 33, 40, 45, 50].forEach((offset, idx) => {
         const d = new Date(today);
         d.setDate(today.getDate() + offset);
-        bookingRegistry[d.toISOString().split('T')[0]] = ['Morning', 'Afternoon'];
+        const ds = d.toISOString().split('T')[0];
+        bookingRegistry[ds] = {
+            slots: ['Morning', 'Afternoon'],
+            user: mockUsers[idx % mockUsers.length]
+        };
     });
 
     function isFullyBooked(ds) {
-        const slots = bookingRegistry[ds] || [];
-        // A day is considered fully booked if both main shifts are taken
+        const entry = bookingRegistry[ds];
+        if (!entry) return false;
+        const slots = Array.isArray(entry) ? entry : entry.slots;
         return slots.includes('Morning') && slots.includes('Afternoon');
     }
 
@@ -1748,8 +1790,6 @@
     function buildMiniCalendar() {
         const wrap = document.getElementById('mini-calendar');
         wrap.innerHTML = '';
-        let isDown = false, startX = 0, scrollLeft0 = 0, dragRaf = 0, moveX = 0, hasMoved = false;
-
         for (let i = 0; i < 14; i++) {
             const d = new Date(today);
             d.setDate(today.getDate() + i);
@@ -1767,8 +1807,7 @@
                 <span class="date-pill-month">${d.toLocaleString('default',{month:'short'})}</span>
             `;
             if (!booked) {
-                pill.onclick = (e) => {
-                    if (hasMoved) return; // Prevent selection if dragging
+                pill.onclick = () => {
                     document.getElementById('schedule-error-msg').classList.add('hidden');
                     selectDate(ds, fmtLong(d));
                 };
@@ -1779,10 +1818,10 @@
             }
             wrap.appendChild(pill);
         }
-
+        // drag-to-scroll (desktop); touch uses native horizontal scroll — rAF-throttled for smoother frames
+        let isDown = false, startX = 0, scrollLeft0 = 0, dragRaf = 0, moveX = 0;
         wrap.addEventListener('mousedown', function (e) {
             isDown = true;
-            hasMoved = false;
             startX = e.clientX;
             scrollLeft0 = wrap.scrollLeft;
         });
@@ -1792,8 +1831,6 @@
             if (!isDown) return;
             e.preventDefault();
             moveX = e.clientX;
-            if (Math.abs(moveX - startX) > 5) hasMoved = true;
-            
             if (dragRaf) return;
             dragRaf = requestAnimationFrame(function () {
                 dragRaf = 0;
@@ -1806,6 +1843,10 @@
     function selectDate(ds, label, closeModalAfter) {
         selectedDateStr = ds;
         document.getElementById('schedule-input').value = ds;
+
+        // Hide booker details if any
+        const detailCard = document.getElementById('booking-detail-card');
+        if (detailCard) detailCard.classList.add('hidden');
 
         // Update time slot radio buttons based on date's availability
         updateTimeSlotAvailability(ds);
@@ -1829,6 +1870,12 @@
         document.getElementById('modal-selected-text').textContent = label;
 
         // Grid highlight
+        const doneBtn = document.getElementById('close-modal');
+        if (doneBtn) {
+            doneBtn.disabled = false;
+            doneBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
         document.querySelectorAll('.cal-day-btn').forEach(b => {
             b.classList.remove('cal-selected');
             if (b.dataset.date === ds) b.classList.add('cal-selected');
@@ -1839,6 +1886,35 @@
         if (document.querySelector('input[name="time_slot"]:checked')) document.getElementById('confirm-schedule-wrap').classList.remove('hidden');
 
         if (closeModalAfter !== false) closeModal();
+    }
+
+    function showBookerDetails(ds, label) {
+        const entry = bookingRegistry[ds];
+        if (!entry || !entry.user) return;
+        
+        // Update grid highlight
+        const doneBtn = document.getElementById('close-modal');
+        if (doneBtn) {
+            doneBtn.disabled = true;
+            doneBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        document.querySelectorAll('.cal-day-btn').forEach(b => {
+            b.classList.toggle('cal-selected', b.dataset.date === ds);
+        });
+
+        // Update modal sidebar
+        const modalText = document.getElementById('modal-selected-text');
+        const card = document.getElementById('booking-detail-card');
+        const img = document.getElementById('booker-avatar');
+        const name = document.getElementById('booker-name');
+        
+        if (modalText) modalText.textContent = label;
+        if (card && img && name) {
+            img.src = entry.user.avatar;
+            name.textContent = entry.user.name;
+            card.classList.remove('hidden');
+        }
     }
 
     function updateTimeSlotAvailability(dateStr) {
@@ -1855,18 +1931,14 @@
             const isSlotTaken = bookedSlots.includes(slotName);
 
             if (isSlotTaken) {
-                const wasChecked = input.checked;
                 input.disabled = true;
-                input.checked = false;
-                
-                if (wasChecked) {
-                    // Only hide review if the *currently selected* slot is now unavailable
-                    document.getElementById('final-schedule-review').classList.add('hidden');
-                }
-
+                input.checked = false; // Deselect if previously chosen
                 visualDiv.classList.add('opacity-40', 'bg-stone-100', 'cursor-not-allowed', 'pointer-events-none');
                 visualDiv.querySelector('.font-bold').classList.add('line-through', 'text-stone-400');
                 if (badge) badge.classList.remove('hidden');
+                
+                // Hide confirmation if a previously selected slot is now disabled
+                document.getElementById('final-schedule-review').classList.add('hidden');
             } else {
                 input.disabled = false;
                 visualDiv.classList.remove('opacity-40', 'bg-stone-100', 'cursor-not-allowed', 'pointer-events-none');
@@ -1877,8 +1949,6 @@
     }
 
     // ---- FULL MODAL CALENDAR ----
-    let fullCalendarBuilt = false;
-
     function buildFullCalendar() {
         const container = document.getElementById('full-grid-container');
         const jumpList = document.getElementById('month-jump-list');
@@ -1977,9 +2047,17 @@
                 if (!isPast && !isBooked && !isBeyond) {
                     btn.onclick = () => selectDate(ds, fmtLong(d), false);
                 } else if (isBooked) {
+                    // Add small profile avatar for fully booked dates
+                    const entry = bookingRegistry[ds];
+                    if (entry && entry.user) {
+                        const avatarDiv = document.createElement('div');
+                        avatarDiv.className = 'booked-avatar-sm';
+                        avatarDiv.innerHTML = `<img src="${entry.user.avatar}" class="w-full h-full object-cover" alt="Booked">`;
+                        btn.appendChild(avatarDiv);
+                    }
+
                     btn.onclick = () => {
-                        showScheduleError("This date is fully booked. Please select an available date.");
-                        closeModal();
+                        showBookerDetails(ds, fmtLong(d));
                     };
                 }
 
@@ -1993,12 +2071,6 @@
         container.appendChild(monthFrag);
     }
 
-    function updateFullCalendarHighlights() {
-        document.querySelectorAll('.cal-day-btn').forEach(b => {
-            b.classList.toggle('cal-selected', b.dataset.date === selectedDateStr);
-        });
-    }
-
     function getDaysInMonth(monthStart, endDate) {
         let count = 0;
         const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth()+1, 0).getDate();
@@ -2010,15 +2082,16 @@
     }
 
     function openModal() {
-        if (!fullCalendarBuilt) {
-            buildFullCalendar();
-            fullCalendarBuilt = true;
-        } else {
-            updateFullCalendarHighlights();
-        }
-
+        buildFullCalendar();
         const modal = document.getElementById('full-calendar-modal');
         modal.classList.add('open');
+
+        const doneBtn = document.getElementById('close-modal');
+        if (doneBtn) {
+            doneBtn.disabled = false;
+            doneBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
         document.body.style.overflow = 'hidden';
         requestAnimationFrame(function () {
             requestAnimationFrame(function () {
@@ -2035,7 +2108,6 @@
     function closeModal() {
         document.getElementById('full-calendar-modal').classList.remove('open');
         document.body.style.overflow = '';
-        document.getElementById('open-full-calendar').focus();
     }
 
     document.getElementById('open-full-calendar').onclick = openModal;
