@@ -1098,22 +1098,7 @@
                         </label>
                 
                         <!-- Other -->
-                        <div class="rounded-xl sm:rounded-2xl border-2 border-stone-200 bg-white p-3 sm:p-4 transition-all has-[:checked]:border-pristine-green has-[:checked]:bg-emerald-50/70 min-w-0">
-                            <label class="group flex gap-4 cursor-pointer">
-                                <input type="checkbox" name="cleaning_services[]" value="other" id="cleaning-other" class="peer sr-only">
-                                <span class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-stone-300 bg-white flex items-center justify-center transition-all group-hover:border-emerald-400 peer-checked:border-pristine-green peer-checked:bg-pristine-green">
-                                    <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                </span>
-                                <div class="min-w-0 flex-1">
-                                    <span class="font-bold text-stone-900 text-sm">Iba pa <span class="font-normal text-stone-500">(Others)</span></span>
-                                    <p class="text-xs text-stone-500 mt-1">Specify below if you need something not listed.</p>
-                                </div>
-                            </label>
-                            <div id="other-cleaning-wrap" class="hidden mt-4 pl-0 sm:pl-9 border-t border-stone-100 pt-4">
-                                <label for="cleaning_other_details" class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Describe your other service needs <span class="text-red-500">*</span></label>
-                                <textarea id="cleaning_other_details" name="cleaning_other_details" rows="3" placeholder="e.g. upholstery, industrial kitchen, specific schedule…" class="w-full p-4 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none transition text-sm resize-none"></textarea>
-                            </div>
-                        </div>
+                  
                     </div>
                 </fieldset>
 
@@ -1365,7 +1350,8 @@
                         <div id="time-slots-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Morning" class="peer hidden" required>
-                                <div class="p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
                                     <span class="block text-xl mb-1"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Morning</span>
                                     <span class="text-xs text-stone-400">8:00 AM – 12:00 PM</span>
@@ -1373,7 +1359,8 @@
                             </label>
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Afternoon" class="peer hidden">
-                                <div class="p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
                                     <span class="block text-xl mb-1"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Afternoon</span>
                                     <span class="text-xs text-stone-400">1:00 PM – 5:00 PM</span>
@@ -1381,7 +1368,7 @@
                             </label>
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Flexible" class="peer hidden">
-                                <div class="p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
                                     <span class="block text-xl mb-1"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Flexible</span>
                                     <span class="text-xs text-stone-400">Anytime works</span>
@@ -1408,6 +1395,12 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                 Confirm Schedule Selection
                             </button>
+                        </div>
+
+                        <!-- Error Message for Schedule -->
+                        <div id="schedule-error-msg" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2 animate-in fade-in zoom-in duration-200">
+                            <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                            <p class="text-xs text-red-700 font-medium">Please select an available date and time slot before confirming.</p>
                         </div>
 
                         <!-- Combined Summary Review -->
@@ -1564,13 +1557,26 @@
     const today = new Date();
     today.setHours(0,0,0,0);
 
-    // Simulate some booked dates
-    const bookedDates = new Set();
-    [3,7,10,15,18,22,28,33,40,45,50].forEach(offset => {
+    // Simulate booking data: { 'YYYY-MM-DD': ['Morning', 'Afternoon'] }
+    const bookingRegistry = {};
+    // Dates with only Morning booked
+    [1, 5, 12, 15, 20].forEach(offset => {
         const d = new Date(today);
         d.setDate(today.getDate() + offset);
-        bookedDates.add(d.toISOString().split('T')[0]);
+        bookingRegistry[d.toISOString().split('T')[0]] = ['Morning'];
     });
+    // Dates fully booked (Morning & Afternoon)
+    [3, 7, 10, 18, 22, 28, 33, 40, 45, 50].forEach(offset => {
+        const d = new Date(today);
+        d.setDate(today.getDate() + offset);
+        bookingRegistry[d.toISOString().split('T')[0]] = ['Morning', 'Afternoon'];
+    });
+
+    function isFullyBooked(ds) {
+        const slots = bookingRegistry[ds] || [];
+        // A day is considered fully booked if both main shifts are taken
+        return slots.includes('Morning') && slots.includes('Afternoon');
+    }
 
     let selectedDateStr = '';
 
@@ -1644,6 +1650,14 @@
                 if (otherTa) otherTa.focus();
                 if (fieldsetServices) fieldsetServices.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+
+            // Validate schedule confirmation
+            const scheduleConfirmed = !document.getElementById('final-schedule-review').classList.contains('hidden');
+            if (!scheduleConfirmed) {
+                e.preventDefault();
+                showScheduleError("Please select and confirm your preferred schedule (date and time) before submitting.");
+                document.getElementById('mini-calendar').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         });
     })();
 
@@ -1656,6 +1670,7 @@
         const summaryText = document.getElementById('summary-date-time');
         const flexibleStart = document.querySelector('input[name="flexible_start_time"]');
         const flexibleEnd = document.querySelector('input[name="flexible_end_time"]');
+        const errorMsg = document.getElementById('schedule-error-msg');
 
         function getFormattedTime() {
             const selected = document.querySelector('input[name="time_slot"]:checked');
@@ -1673,18 +1688,28 @@
         }
 
         function updateSummary() {
-            if (!selectedDateStr) return;
+            if (!selectedDateStr) {
+                showScheduleError("Please select a date from the calendar first.");
+                return;
+            }
             const timeLabel = getFormattedTime();
+            if (!timeLabel) {
+                showScheduleError("Please pick a preferred time window.");
+                return;
+            }
+
             const dateLabel = document.getElementById('calendar-header-date').textContent;
             summaryText.textContent = `${dateLabel} • ${timeLabel}`;
             summaryBox.classList.remove('hidden');
             confirmWrap.classList.add('hidden');
+            errorMsg.classList.add('hidden');
         }
 
         // Show confirm button when time slot is picked
         timeContainer.addEventListener('change', () => {
             summaryBox.classList.add('hidden'); // Hide summary if they change selection
             confirmWrap.classList.remove('hidden');
+            errorMsg.classList.add('hidden');
         });
 
         // Also watch flexible time inputs
@@ -1693,12 +1718,21 @@
                 if (document.querySelector('input[name="time_slot"][value="Flexible"]:checked')) {
                     summaryBox.classList.add('hidden');
                     confirmWrap.classList.remove('hidden');
+                    errorMsg.classList.add('hidden');
                 }
             });
         });
 
         confirmBtn.addEventListener('click', updateSummary);
     })();
+
+    function showScheduleError(text) {
+        const err = document.getElementById('schedule-error-msg');
+        if (!err) return;
+        err.querySelector('p').textContent = text;
+        err.classList.remove('hidden');
+        err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
     function fmtDateStr(d) {
         return d.toISOString().split('T')[0];
@@ -1714,11 +1748,13 @@
     function buildMiniCalendar() {
         const wrap = document.getElementById('mini-calendar');
         wrap.innerHTML = '';
+        let isDown = false, startX = 0, scrollLeft0 = 0, dragRaf = 0, moveX = 0, hasMoved = false;
+
         for (let i = 0; i < 14; i++) {
             const d = new Date(today);
             d.setDate(today.getDate() + i);
             const ds = fmtDateStr(d);
-            const booked = bookedDates.has(ds);
+            const booked = isFullyBooked(ds);
             const isToday = i === 0;
 
             const pill = document.createElement('div');
@@ -1731,14 +1767,22 @@
                 <span class="date-pill-month">${d.toLocaleString('default',{month:'short'})}</span>
             `;
             if (!booked) {
-                pill.onclick = () => selectDate(ds, fmtLong(d));
+                pill.onclick = (e) => {
+                    if (hasMoved) return; // Prevent selection if dragging
+                    document.getElementById('schedule-error-msg').classList.add('hidden');
+                    selectDate(ds, fmtLong(d));
+                };
+            } else {
+                pill.onclick = () => {
+                    showScheduleError("This date is fully booked. Please select an available date (green border).");
+                };
             }
             wrap.appendChild(pill);
         }
-        // drag-to-scroll (desktop); touch uses native horizontal scroll — rAF-throttled for smoother frames
-        let isDown = false, startX = 0, scrollLeft0 = 0, dragRaf = 0, moveX = 0;
+
         wrap.addEventListener('mousedown', function (e) {
             isDown = true;
+            hasMoved = false;
             startX = e.clientX;
             scrollLeft0 = wrap.scrollLeft;
         });
@@ -1748,6 +1792,8 @@
             if (!isDown) return;
             e.preventDefault();
             moveX = e.clientX;
+            if (Math.abs(moveX - startX) > 5) hasMoved = true;
+            
             if (dragRaf) return;
             dragRaf = requestAnimationFrame(function () {
                 dragRaf = 0;
@@ -1760,6 +1806,10 @@
     function selectDate(ds, label, closeModalAfter) {
         selectedDateStr = ds;
         document.getElementById('schedule-input').value = ds;
+
+        // Update time slot radio buttons based on date's availability
+        updateTimeSlotAvailability(ds);
+        document.getElementById('schedule-error-msg').classList.add('hidden');
 
         // Update header
         const hd = document.getElementById('calendar-header-date');
@@ -1791,7 +1841,44 @@
         if (closeModalAfter !== false) closeModal();
     }
 
+    function updateTimeSlotAvailability(dateStr) {
+        const bookedSlots = bookingRegistry[dateStr] || [];
+        const container = document.getElementById('time-slots-container');
+        const inputs = container.querySelectorAll('input[name="time_slot"]');
+
+        inputs.forEach(input => {
+            const visualDiv = input.nextElementSibling;
+            const slotName = input.value;
+            const badge = visualDiv.querySelector('.booked-badge');
+            
+            // Check if the specific shift is in the registry for this date
+            const isSlotTaken = bookedSlots.includes(slotName);
+
+            if (isSlotTaken) {
+                const wasChecked = input.checked;
+                input.disabled = true;
+                input.checked = false;
+                
+                if (wasChecked) {
+                    // Only hide review if the *currently selected* slot is now unavailable
+                    document.getElementById('final-schedule-review').classList.add('hidden');
+                }
+
+                visualDiv.classList.add('opacity-40', 'bg-stone-100', 'cursor-not-allowed', 'pointer-events-none');
+                visualDiv.querySelector('.font-bold').classList.add('line-through', 'text-stone-400');
+                if (badge) badge.classList.remove('hidden');
+            } else {
+                input.disabled = false;
+                visualDiv.classList.remove('opacity-40', 'bg-stone-100', 'cursor-not-allowed', 'pointer-events-none');
+                visualDiv.querySelector('.font-bold').classList.remove('line-through', 'text-stone-400');
+                if (badge) badge.classList.add('hidden');
+            }
+        });
+    }
+
     // ---- FULL MODAL CALENDAR ----
+    let fullCalendarBuilt = false;
+
     function buildFullCalendar() {
         const container = document.getElementById('full-grid-container');
         const jumpList = document.getElementById('month-jump-list');
@@ -1869,7 +1956,7 @@
                 const d = new Date(monthStart.getFullYear(), monthStart.getMonth(), day);
                 const ds = fmtDateStr(d);
                 const isPast = d < today;
-                const isBooked = bookedDates.has(ds);
+                const isBooked = isFullyBooked(ds);
                 const isTday = ds === fmtDateStr(today);
                 const isSelected = ds === selectedDateStr;
                 const isBeyond = d > end;
@@ -1889,6 +1976,11 @@
 
                 if (!isPast && !isBooked && !isBeyond) {
                     btn.onclick = () => selectDate(ds, fmtLong(d), false);
+                } else if (isBooked) {
+                    btn.onclick = () => {
+                        showScheduleError("This date is fully booked. Please select an available date.");
+                        closeModal();
+                    };
                 }
 
                 grid.appendChild(btn);
@@ -1901,18 +1993,30 @@
         container.appendChild(monthFrag);
     }
 
+    function updateFullCalendarHighlights() {
+        document.querySelectorAll('.cal-day-btn').forEach(b => {
+            b.classList.toggle('cal-selected', b.dataset.date === selectedDateStr);
+        });
+    }
+
     function getDaysInMonth(monthStart, endDate) {
         let count = 0;
         const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth()+1, 0).getDate();
         for (let day = 1; day <= daysInMonth; day++) {
             const d = new Date(monthStart.getFullYear(), monthStart.getMonth(), day);
-            if (d >= today && d <= endDate && !bookedDates.has(fmtDateStr(d))) count++;
+            if (d >= today && d <= endDate && !isFullyBooked(fmtDateStr(d))) count++;
         }
         return count;
     }
 
     function openModal() {
-        buildFullCalendar();
+        if (!fullCalendarBuilt) {
+            buildFullCalendar();
+            fullCalendarBuilt = true;
+        } else {
+            updateFullCalendarHighlights();
+        }
+
         const modal = document.getElementById('full-calendar-modal');
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
@@ -1931,6 +2035,7 @@
     function closeModal() {
         document.getElementById('full-calendar-modal').classList.remove('open');
         document.body.style.overflow = '';
+        document.getElementById('open-full-calendar').focus();
     }
 
     document.getElementById('open-full-calendar').onclick = openModal;
