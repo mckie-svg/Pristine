@@ -1369,8 +1369,9 @@
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Morning" class="peer hidden" required>
                                 <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="available-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded tracking-tighter">Available</span>
                                     <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
-                                    <span class="block text-xl mb-1"></span>
+                                    <span class="block text-xl mb-1 slot-icon"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Morning</span>
                                     <span class="text-xs text-stone-400">8:00 AM – 12:00 PM</span>
                                 </div>
@@ -1378,29 +1379,42 @@
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Afternoon" class="peer hidden">
                                 <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="available-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded tracking-tighter">Available</span>
                                     <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
-                                    <span class="block text-xl mb-1"></span>
+                                    <span class="block text-xl mb-1 slot-icon"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Afternoon</span>
                                     <span class="text-xs text-stone-400">1:00 PM – 5:00 PM</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Flexible" class="peer hidden">
-                                <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
-                                    <span class="block text-xl mb-1"></span>
+                                <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all group-has-[:checked]:border-pristine-green group-has-[:checked]:bg-emerald-50 group-hover:border-emerald-200">
+                                    <span class="available-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded tracking-tighter">Available</span>
+                                    <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
+                                    <span class="block text-xl mb-1 slot-icon"></span>
                                     <span class="block font-bold text-stone-700 text-sm">Flexible</span>
                                     <span class="text-xs text-stone-400">Anytime works</span>
-                                </div>
-                                <!-- Time selector revealed only when Flexible is selected -->
-                                <div class="hidden peer-checked:block mt-2 px-1">
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1">Start</label>
-                                            <input type="time" name="flexible_start_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-medium" title="Preferred start time">
+
+                                    <!-- Time selector revealed only when Flexible is selected -->
+                                    <div class="hidden group-has-[:checked]:block mt-4 pt-4 border-t border-stone-200/60 text-left animate-in fade-in slide-in-from-top-1 duration-200">
+                                        <!-- Occupied Hours Indicator -->
+                                        <div id="flexible-busy-times" class="hidden mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                                            <div class="flex items-center gap-2 mb-1.5">
+                                                <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                                                <p class="text-[10px] font-black text-amber-700 uppercase tracking-widest">Occupied Hours</p>
+                                            </div>
+                                            <ul id="busy-times-list" class="text-[11px] text-amber-800 space-y-1 font-semibold list-disc list-inside px-1"></ul>
                                         </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1">End <span class="normal-case opacity-60">(Opt)</span></label>
-                                            <input type="time" name="flexible_end_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-medium" title="Optional end time">
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1 tracking-tight">Preferred Start</label>
+                                                <select name="flexible_start_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-bold" title="Preferred start time"></select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1 tracking-tight">Approx. End</label>
+                                                <select name="flexible_end_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-bold" title="Optional end time"></select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1613,11 +1627,38 @@
         };
     });
 
+    // Simulate partial bookings for specific hours
+    [2, 6, 9, 14, 25].forEach(offset => {
+        const d = new Date(today);
+        d.setDate(today.getDate() + offset);
+        const ds = d.toISOString().split('T')[0];
+        if (!bookingRegistry[ds]) {
+            bookingRegistry[ds] = {
+                slots: [],
+                bookedRanges: [{ start: "10:00", end: "14:00" }]
+            };
+        }
+    });
+
     function isFullyBooked(ds) {
         const entry = bookingRegistry[ds];
         if (!entry) return false;
-        const slots = Array.isArray(entry) ? entry : entry.slots;
+        const slots = Array.isArray(entry) ? entry : (entry.slots || []);
         return slots.includes('Morning') && slots.includes('Afternoon');
+    }
+
+    function getMergedBookedRanges(ds) {
+        const entry = bookingRegistry[ds];
+        if (!entry) return [];
+        
+        // Handle both simple array formats and detailed object formats in the registry
+        const slots = Array.isArray(entry) ? entry : (entry.slots || []);
+        let ranges = (entry && !Array.isArray(entry) && entry.bookedRanges) ? [...entry.bookedRanges] : [];
+        
+        if (slots.includes('Morning')) ranges.push({ start: "08:00", end: "12:00" });
+        if (slots.includes('Afternoon')) ranges.push({ start: "13:00", end: "17:00" });
+        
+        return ranges.sort((a, b) => a.start.localeCompare(b.start));
     }
 
     let selectedDateStr = '';
@@ -1710,8 +1751,8 @@
         const confirmBtn = document.getElementById('confirm-schedule-btn');
         const summaryBox = document.getElementById('final-schedule-review');
         const summaryText = document.getElementById('summary-date-time');
-        const flexibleStart = document.querySelector('input[name="flexible_start_time"]');
-        const flexibleEnd = document.querySelector('input[name="flexible_end_time"]');
+        const flexibleStart = document.querySelector('select[name="flexible_start_time"]');
+        const flexibleEnd = document.querySelector('select[name="flexible_end_time"]');
         const errorMsg = document.getElementById('schedule-error-msg');
 
         function getFormattedTime() {
@@ -1734,6 +1775,12 @@
                 showScheduleError("Please select a date from the calendar first.");
                 return;
             }
+
+            const selected = document.querySelector('input[name="time_slot"]:checked');
+            if (selected && selected.value === 'Flexible') {
+                if (checkFlexibleOverlap()) return;
+            }
+
             const timeLabel = getFormattedTime();
             if (!timeLabel) {
                 showScheduleError("Please pick a preferred time window.");
@@ -1749,15 +1796,27 @@
 
         // Show confirm button when time slot is picked
         timeContainer.addEventListener('change', () => {
+            if (document.querySelector('input[name="time_slot"][value="Flexible"]:checked')) {
+                if (checkFlexibleOverlap()) {
+                    summaryBox.classList.add('hidden');
+                    confirmWrap.classList.add('hidden');
+                    return;
+                }
+            }
             summaryBox.classList.add('hidden'); // Hide summary if they change selection
             confirmWrap.classList.remove('hidden');
             errorMsg.classList.add('hidden');
         });
 
         // Also watch flexible time inputs
-        [flexibleStart, flexibleEnd].forEach(input => {
-            input.addEventListener('change', () => {
+        [flexibleStart, flexibleEnd].forEach(sel => {
+            sel.addEventListener('change', () => {
                 if (document.querySelector('input[name="time_slot"][value="Flexible"]:checked')) {
+                    if (checkFlexibleOverlap()) {
+                        summaryBox.classList.add('hidden');
+                        confirmWrap.classList.add('hidden');
+                        return;
+                    }
                     summaryBox.classList.add('hidden');
                     confirmWrap.classList.remove('hidden');
                     errorMsg.classList.add('hidden');
@@ -1767,6 +1826,28 @@
 
         confirmBtn.addEventListener('click', updateSummary);
     })();
+
+    function checkFlexibleOverlap() {
+        const startVal = document.querySelector('select[name="flexible_start_time"]').value;
+        const endVal = document.querySelector('select[name="flexible_end_time"]').value;
+        if (!startVal || !selectedDateStr) return false;
+
+        const ranges = getMergedBookedRanges(selectedDateStr);
+        
+        const hasOverlap = ranges.some(r => {
+            const sUser = startVal;
+            const eUser = endVal || "23:59";
+            const sBooked = r.start;
+            const eBooked = r.end;
+            return sUser < eBooked && eUser > sBooked;
+        });
+
+        if (hasOverlap) {
+            showScheduleError("The selected time overlaps with an existing booking. Please try another window.");
+            return true;
+        }
+        return false;
+    }
 
     function showScheduleError(text) {
         const err = document.getElementById('schedule-error-msg');
@@ -1892,6 +1973,9 @@
         const entry = bookingRegistry[ds];
         if (!entry || !entry.user) return;
         
+        // Update availability UI to show slots are booked for this date
+        updateTimeSlotAvailability(ds);
+        
         // Update grid highlight
         const doneBtn = document.getElementById('close-modal');
         if (doneBtn) {
@@ -1915,27 +1999,69 @@
             name.textContent = entry.user.name;
             card.classList.remove('hidden');
         }
+
+        populateFlexibleSelectors(dateStr);
+    }
+
+    function populateFlexibleSelectors(dateStr) {
+        const startSelect = document.querySelector('select[name="flexible_start_time"]');
+        const endSelect = document.querySelector('select[name="flexible_end_time"]');
+        if (!startSelect || !endSelect) return;
+
+        const ranges = getMergedBookedRanges(dateStr);
+        
+        startSelect.innerHTML = '<option value="">Start Time</option>';
+        endSelect.innerHTML = '<option value="">End Time</option>';
+
+        // Business hours: 08:00 to 18:00
+        for (let h = 8; h <= 18; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                if (h === 18 && m > 0) break;
+                const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                const displayTime = convertTo12Hour(timeStr);
+                const isBooked = ranges.some(r => timeStr >= r.start && timeStr < r.end);
+                
+                const optStart = new Option(displayTime, timeStr);
+                if (isBooked) { optStart.disabled = true; optStart.text += " (Booked)"; }
+                startSelect.add(optStart);
+
+                const optEnd = new Option(displayTime, timeStr);
+                if (isBooked) { optEnd.disabled = true; optEnd.text += " (Booked)"; }
+                endSelect.add(optEnd);
+            }
+        }
     }
 
     function updateTimeSlotAvailability(dateStr) {
-        const bookedSlots = bookingRegistry[dateStr] || [];
+        const entry = bookingRegistry[dateStr];
+        const bookedSlots = entry ? (Array.isArray(entry) ? entry : (entry.slots || [])) : [];
         const container = document.getElementById('time-slots-container');
         const inputs = container.querySelectorAll('input[name="time_slot"]');
 
         inputs.forEach(input => {
             const visualDiv = input.nextElementSibling;
             const slotName = input.value;
-            const badge = visualDiv.querySelector('.booked-badge');
+            const bookedBadge = visualDiv.querySelector('.booked-badge');
+            const availableBadge = visualDiv.querySelector('.available-badge');
+            const slotIcon = visualDiv.querySelector('.slot-icon');
             
-            // Check if the specific shift is in the registry for this date
-            const isSlotTaken = bookedSlots.includes(slotName);
+            let isSlotTaken = false;
+            if (slotName === 'Flexible') {
+                isSlotTaken = isFullyBooked(dateStr);
+            } else {
+                isSlotTaken = bookedSlots.includes(slotName);
+            }
 
             if (isSlotTaken) {
                 input.disabled = true;
                 input.checked = false; // Deselect if previously chosen
                 visualDiv.classList.add('opacity-40', 'bg-stone-100', 'cursor-not-allowed', 'pointer-events-none');
                 visualDiv.querySelector('.font-bold').classList.add('line-through', 'text-stone-400');
-                if (badge) badge.classList.remove('hidden');
+                if (bookedBadge) bookedBadge.classList.remove('hidden');
+                if (availableBadge) availableBadge.classList.add('hidden');
+                if (slotIcon) {
+                    slotIcon.innerHTML = '<svg class="w-6 h-6 mx-auto text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>';
+                }
                 
                 // Hide confirmation if a previously selected slot is now disabled
                 document.getElementById('final-schedule-review').classList.add('hidden');
@@ -1943,9 +2069,48 @@
                 input.disabled = false;
                 visualDiv.classList.remove('opacity-40', 'bg-stone-100', 'cursor-not-allowed', 'pointer-events-none');
                 visualDiv.querySelector('.font-bold').classList.remove('line-through', 'text-stone-400');
-                if (badge) badge.classList.add('hidden');
+                if (bookedBadge) bookedBadge.classList.add('hidden');
+                if (availableBadge) availableBadge.classList.remove('hidden');
+                if (slotIcon) {
+                    slotIcon.innerHTML = '<svg class="w-6 h-6 mx-auto text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+                }
             }
         });
+
+        // Handle Flexible partial bookings (Busy Hours)
+        const busyTimesList = document.getElementById('busy-times-list');
+        const busyTimesPanel = document.getElementById('flexible-busy-times');
+        
+        if (busyTimesList && busyTimesPanel) {
+            busyTimesList.innerHTML = '';
+            const bookedRanges = getMergedBookedRanges(dateStr);
+            
+            if (bookedRanges.length > 0) {
+                bookedRanges.forEach(range => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-center gap-2 text-red-600 font-bold';
+                    li.innerHTML = `
+                        <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span>${convertTo12Hour(range.start)} – ${convertTo12Hour(range.end)} (Booked)</span>
+                    `;
+                    busyTimesList.appendChild(li);
+                });
+                busyTimesPanel.classList.remove('hidden');
+            } else {
+                busyTimesPanel.classList.add('hidden');
+            }
+        }
+    }
+
+    function convertTo12Hour(time) {
+        if (!time) return '';
+        const [hours, minutes] = time.split(':');
+        let h = parseInt(hours);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        return `${h}:${minutes} ${ampm}`;
     }
 
     // ---- FULL MODAL CALENDAR ----
