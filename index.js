@@ -64,5 +64,52 @@ window.addEventListener(
     { passive: true }
 );
 
+/**
+ * PROFESSIONAL CLEAN URL RESOLVER
+ * Maps clean names (/home, /services, /inquiry) to actual files,
+ * ensuring a professional aesthetic without "Cannot GET" errors.
+ */
+(function() {
+    const routeMap = {
+        '/home': '/index.html',
+        '/services': '/src/services.html',
+        '/inquiry': '/src/inquiry.html'
+    };
 
+    function cleanAddressBar() {
+        const path = window.location.pathname;
+        
+        // If at root or index.html, show /home
+        if (path === '/' || path.endsWith('/index.html')) {
+            window.history.replaceState(null, '', '/home' + window.location.search + window.location.hash);
+            return;
+        }
 
+        // Check if current path matches any of our file targets
+        for (const [route, file] of Object.entries(routeMap)) {
+            if (path.endsWith(file)) {
+                window.history.replaceState(null, '', route + window.location.search + window.location.hash);
+                return;
+            }
+        }
+    }
+
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+
+        const href = a.getAttribute('href');
+        
+        // Handle mapped routes
+        if (routeMap[href]) {
+            e.preventDefault();
+            window.location.href = routeMap[href];
+        } else if (href === '/') {
+            e.preventDefault();
+            window.location.href = '/index.html';
+        }
+    });
+
+    if (document.readyState === 'complete') cleanAddressBar();
+    else window.addEventListener('load', cleanAddressBar);
+})();
