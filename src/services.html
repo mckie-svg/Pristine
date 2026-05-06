@@ -78,7 +78,7 @@
     <div id="nav-bar-row" class="pointer-events-auto bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50 transition-transform duration-300 ease-out">
         <div class="container mx-auto flex justify-between items-center gap-3 px-6 lg:px-12 h-24 min-w-0">
             <!-- Logo -->
-            <a href="/home" class="flex min-w-0 flex-1 items-center transition-transform hover:scale-105 md:flex-none">
+            <a href="../index.html" class="flex min-w-0 flex-1 items-center transition-transform hover:scale-105 md:flex-none">
                 <img src="img/brand_logo.png" alt="Pristine Touch Logo" class="h-12 w-auto max-h-16 max-w-[min(200px,52vw)] object-contain object-left drop-shadow-md sm:h-16 sm:max-w-[220px]">
             </a>
 
@@ -105,9 +105,9 @@
 
     <!-- Mobile Menu Overlay: sibling of nav bar so fixed + full viewport works -->
     <div id="mobile-menu" class="pointer-events-auto fixed inset-0 bg-emerald-950/95 backdrop-blur-sm translate-x-full transition-transform duration-500 z-[100] md:hidden flex flex-col items-center justify-center gap-8 sm:gap-10 px-6 text-center pt-24 pb-12 overflow-y-auto">
-        <a href="/home" class="mobile-link">Home</a>
-        <a href="/services" class="mobile-link">Services</a>
-        <a href="/inquiry" class="mobile-link">Contact</a>
+        <a href="../index.html" class="mobile-link">Home</a>
+        <a href="services.html" class="mobile-link">Services</a>
+        <a href="inquiry.html" class="mobile-link">Contact</a>
     </div>
 </nav>
 
@@ -248,19 +248,19 @@
         <!-- Stats row -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
             <div class="stat-card bg-emerald-950 text-white rounded-2xl px-6 py-7 fade-up fade-up-1">
-                <p class="text-4xl font-extrabold text-emerald-400 mb-1">500<span class="text-2xl">+</span></p>
+                <p class="text-4xl font-extrabold text-emerald-400 mb-1"><span class="stat-number" data-target="500">0</span><span class="text-2xl">+</span></p>
                 <p class="text-xs font-semibold uppercase tracking-widest text-emerald-200 opacity-80">Clients Served</p>
             </div>
             <div class="stat-card bg-stone-100 rounded-2xl px-6 py-7 fade-up fade-up-2">
-                <p class="text-4xl font-extrabold text-emerald-700 mb-1">98<span class="text-2xl">%</span></p>
+                <p class="text-4xl font-extrabold text-emerald-700 mb-1"><span class="stat-number" data-target="98">0</span><span class="text-2xl">%</span></p>
                 <p class="text-xs font-semibold uppercase tracking-widest text-stone-500">Satisfaction Rate</p>
             </div>
             <div class="stat-card bg-stone-100 rounded-2xl px-6 py-7 fade-up fade-up-3">
-                <p class="text-4xl font-extrabold text-emerald-700 mb-1">5<span class="text-2xl">yrs</span></p>
+                <p class="text-4xl font-extrabold text-emerald-700 mb-1"><span class="stat-number" data-target="5">0</span><span class="text-2xl">yrs</span></p>
                 <p class="text-xs font-semibold uppercase tracking-widest text-stone-500">In the Industry</p>
             </div>
             <div class="stat-card bg-emerald-950 text-white rounded-2xl px-6 py-7 fade-up fade-up-4">
-                <p class="text-4xl font-extrabold text-emerald-400 mb-1">24<span class="text-2xl">/7</span></p>
+                <p class="text-4xl font-extrabold text-emerald-400 mb-1"><span class="stat-number" data-target="24">0</span><span class="text-2xl">/7</span></p>
                 <p class="text-xs font-semibold uppercase tracking-widest text-emerald-200 opacity-80">Support Available</p>
             </div>
         </div>
@@ -499,6 +499,38 @@
                 1024: { slidesPerView: 3, spaceBetween: 30 },
             },
         });
+
+        // --- Counter Animation ---
+        const statNumbers = document.querySelectorAll('.stat-number');
+        
+        const countUp = (el) => {
+            const target = parseInt(el.getAttribute('data-target'));
+            const duration = 1500; // 1.5 seconds
+            const increment = target / (duration / 16); // 60fps
+            let current = 0;
+
+            const update = () => {
+                current += increment;
+                if (current < target) {
+                    el.innerText = Math.floor(current);
+                    requestAnimationFrame(update);
+                } else {
+                    el.innerText = target;
+                }
+            };
+            update();
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    countUp(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.7 });
+
+        statNumbers.forEach(n => observer.observe(n));
     });
 </script>
 
