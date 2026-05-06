@@ -874,6 +874,35 @@
         @media (max-width: 639px) {
             .service-types-scroll { max-height: min(22rem, 50vh); }
         }
+
+        /* Custom Time Select Styling */
+        .custom-time-select-container .custom-options {
+            scrollbar-width: thin;
+            scrollbar-color: #0b3d2b #f5f5f4;
+        }
+        .time-opt {
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .time-opt:hover:not(.disabled) {
+            background-color: #f0fdf4;
+            color: #0b3d2b;
+        }
+        .time-opt.selected {
+            background-color: #0b3d2b;
+            color: #ffffff !important;
+        }
+        .time-opt.disabled {
+            color: #9ca3af !important;
+            background-color: #f9fafb;
+            cursor: not-allowed;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -1407,13 +1436,23 @@
                                         </div>
 
                                         <div class="grid grid-cols-2 gap-3">
-                                            <div>
+                                            <div class="relative custom-time-select-container" id="start-time-container">
                                                 <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1 tracking-tight">Preferred Start</label>
-                                                <select name="flexible_start_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-bold" title="Preferred start time"></select>
+                                                <button type="button" class="custom-select-trigger w-full p-3 bg-white border border-stone-200 rounded-xl text-left text-sm text-stone-600 font-bold flex justify-between items-center outline-none focus:ring-2 focus:ring-emerald-500">
+                                                    <span class="selected-val">Start Time</span>
+                                                    <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                </button>
+                                                <div class="custom-options hidden absolute z-20 left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl shadow-xl max-h-48 overflow-y-auto no-scrollbar"></div>
+                                                <input type="hidden" name="flexible_start_time" id="flexible_start_input">
                                             </div>
-                                            <div>
+                                            <div class="relative custom-time-select-container mt-[1px]" id="end-time-container">
                                                 <label class="block text-[10px] font-bold uppercase text-stone-400 mb-1 ml-1 tracking-tight">Approx. End</label>
-                                                <select name="flexible_end_time" class="w-full p-3 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-pristine-green outline-none text-sm text-stone-600 font-bold" title="Optional end time"></select>
+                                                <button type="button" class="custom-select-trigger w-full p-3 bg-white border border-stone-200 rounded-xl text-left text-sm text-stone-600 font-bold flex justify-between items-center outline-none focus:ring-2 focus:ring-emerald-500">
+                                                    <span class="selected-val">End Time</span>
+                                                    <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                </button>
+                                                <div class="custom-options hidden absolute z-20 left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl shadow-xl max-h-48 overflow-y-auto no-scrollbar"></div>
+                                                <input type="hidden" name="flexible_end_time" id="flexible_end_input">
                                             </div>
                                         </div>
                                     </div>
@@ -1751,8 +1790,8 @@
         const confirmBtn = document.getElementById('confirm-schedule-btn');
         const summaryBox = document.getElementById('final-schedule-review');
         const summaryText = document.getElementById('summary-date-time');
-        const flexibleStart = document.querySelector('select[name="flexible_start_time"]');
-        const flexibleEnd = document.querySelector('select[name="flexible_end_time"]');
+        const flexibleStart = document.getElementById('flexible_start_input');
+        const flexibleEnd = document.getElementById('flexible_end_input');
         const errorMsg = document.getElementById('schedule-error-msg');
 
         function getFormattedTime() {
@@ -1760,8 +1799,8 @@
             if (!selected) return null;
             
             if (selected.value === 'Flexible') {
-                const start = flexibleStart.value;
-                const end = flexibleEnd.value;
+                const start = convertTo12Hour(flexibleStart.value);
+                const end = convertTo12Hour(flexibleEnd.value);
                 if (!start) return 'Flexible (Anytime)';
                 return `Flexible: ${start}${end ? ' – ' + end : ' onwards'}`;
             }
@@ -1931,6 +1970,7 @@
 
         // Update time slot radio buttons based on date's availability
         updateTimeSlotAvailability(ds);
+        populateFlexibleSelectors(ds);
         document.getElementById('schedule-error-msg').classList.add('hidden');
 
         // Update header
@@ -2000,18 +2040,30 @@
             card.classList.remove('hidden');
         }
 
-        populateFlexibleSelectors(dateStr);
+        populateFlexibleSelectors(ds);
     }
 
     function populateFlexibleSelectors(dateStr) {
-        const startSelect = document.querySelector('select[name="flexible_start_time"]');
-        const endSelect = document.querySelector('select[name="flexible_end_time"]');
-        if (!startSelect || !endSelect) return;
+        const startContainer = document.getElementById('start-time-container');
+        const endContainer = document.getElementById('end-time-container');
+        if (!startContainer || !endContainer) return;
+
+        const startOptions = startContainer.querySelector('.custom-options');
+        const endOptions = endContainer.querySelector('.custom-options');
+        const startInput = document.getElementById('flexible_start_input');
+        const endInput = document.getElementById('flexible_end_input');
+        
+        // Reset selections
+        if (!startInput.dataset.manualSet) {
+            startInput.value = '';
+            endInput.value = '';
+            startContainer.querySelector('.selected-val').textContent = 'Start Time';
+            endContainer.querySelector('.selected-val').textContent = 'End Time';
+        }
 
         const ranges = getMergedBookedRanges(dateStr);
-        
-        startSelect.innerHTML = '<option value="">Start Time</option>';
-        endSelect.innerHTML = '<option value="">End Time</option>';
+        startOptions.innerHTML = '';
+        endOptions.innerHTML = '';
 
         // Business hours: 08:00 to 18:00
         for (let h = 8; h <= 18; h++) {
@@ -2021,16 +2073,44 @@
                 const displayTime = convertTo12Hour(timeStr);
                 const isBooked = ranges.some(r => timeStr >= r.start && timeStr < r.end);
                 
-                const optStart = new Option(displayTime, timeStr);
-                if (isBooked) { optStart.disabled = true; optStart.text += " (Booked)"; }
-                startSelect.add(optStart);
+                const createOpt = (inputId, container) => {
+                    const div = document.createElement('div');
+                    div.className = 'time-opt' + (isBooked ? ' disabled' : '');
+                    div.textContent = isBooked ? `${displayTime} (Booked)` : displayTime;
+                    if (!isBooked) {
+                        div.onclick = () => {
+                            const input = document.getElementById(inputId);
+                            input.value = timeStr;
+                            input.dataset.manualSet = "true";
+                            container.querySelector('.selected-val').textContent = displayTime;
+                            container.querySelector('.custom-options').classList.add('hidden');
+                            container.querySelectorAll('.time-opt').forEach(o => o.classList.remove('selected'));
+                            div.classList.add('selected');
+                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                        };
+                    }
+                    return div;
+                };
 
-                const optEnd = new Option(displayTime, timeStr);
-                if (isBooked) { optEnd.disabled = true; optEnd.text += " (Booked)"; }
-                endSelect.add(optEnd);
+                startOptions.appendChild(createOpt('flexible_start_input', startContainer));
+                endOptions.appendChild(createOpt('flexible_end_input', endContainer));
             }
         }
     }
+
+    // Dropdown toggle logic
+    document.addEventListener('click', (e) => {
+        const trigger = e.target.closest('.custom-select-trigger');
+        if (trigger) {
+            const options = trigger.nextElementSibling;
+            document.querySelectorAll('.custom-options').forEach(el => {
+                if (el !== options) el.classList.add('hidden');
+            });
+            options.classList.toggle('hidden');
+        } else if (!e.target.closest('.custom-time-select-container')) {
+            document.querySelectorAll('.custom-options').forEach(el => el.classList.add('hidden'));
+        }
+    });
 
     function updateTimeSlotAvailability(dateStr) {
         const entry = bookingRegistry[dateStr];
@@ -2300,6 +2380,12 @@
     });
 
     buildMiniCalendar();
+    
+    // Auto-select the first available date on load so selectors work immediately
+    const firstAvailablePill = document.querySelector('.date-pill:not(.booked)');
+    if (firstAvailablePill) {
+        firstAvailablePill.click();
+    }
 </script>
 <script src="../index.js" defer></script>
 </body>
