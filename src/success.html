@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Inquiry Submitted! | Pristine Touch Cleaning Service</title>
+    <link rel="shortcut icon" href="../src/img/icon.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pristine: { green: '#0b3d2b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f8fafc; /* stone-50 */
+        }
+        .serif-font { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body>
+
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 pointer-events-none">
+        <div id="nav-bar-row" class="pointer-events-auto bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50 transition-transform duration-300 ease-out">
+            <div class="container mx-auto flex justify-between items-center gap-3 px-4 sm:px-6 lg:px-12 h-20 sm:h-24 min-w-0">
+                <!-- Logo -->
+                <a href="../index.html" class="flex min-w-0 flex-1 items-center transition-transform hover:scale-105 md:flex-none">
+                    <img src="img/brand_logo.png" alt="Pristine Touch Logo" class="h-12 w-auto max-h-16 max-w-[min(200px,52vw)] object-contain object-left drop-shadow-md sm:h-16 sm:max-w-[220px]">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-12 text-center">
+        <div class="bg-white rounded-3xl shadow-xl border border-emerald-100 p-8 sm:p-12 lg:p-16 max-w-2xl mx-auto">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-pristine-green serif-font mb-4 leading-tight">Inquiry Submitted!</h1>
+            <p class="text-stone-600 text-base sm:text-lg leading-relaxed mb-6">
+                Thank you for reaching out to Pristine Touch Cleaning Service. We've received your request and our team is already preparing a custom quote tailored to your needs.
+            </p>
+            <p class="text-stone-500 text-sm sm:text-base leading-relaxed mb-8">
+                You can expect to hear from us within <strong>24 business hours</strong> via your preferred contact method.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="../index.html" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-pristine-green text-white font-bold rounded-xl hover:bg-emerald-900 transition-all shadow-md text-sm sm:text-base">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Return to Homepage
+                </a>
+                <a href="services.html" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-stone-200 text-stone-700 font-medium rounded-xl hover:bg-stone-50 transition-all text-sm sm:text-base">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2H7m4 0v-4a2 2 0 012-2h4a2 2 0 012 2v4m-6 0h6"/></svg>
+                    View Our Services
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-pristine-green text-stone-400 py-6 text-center px-4">
+        <p class="font-bold text-white mb-1 text-sm sm:text-base">Pristine Touch Cleaning Service</p>
+        <p class="text-xs sm:text-sm max-w-md mx-auto leading-relaxed">Batinguel, Dumaguete City, Negros Oriental 6200</p>
+    </footer>
+
+    <script src="../index.js" defer></script>
+</body>
+</html>

@@ -922,15 +922,15 @@
         <div id="nav-bar-row" class="pointer-events-auto bg-emerald-950/80 backdrop-blur-md border-b border-emerald-900/50 transition-transform duration-300 ease-out">
             <div class="container mx-auto flex justify-between items-center gap-3 px-4 sm:px-6 lg:px-12 h-20 sm:h-24 min-w-0">
                 <!-- Logo -->
-                <a href="/home" class="flex min-w-0 flex-1 items-center transition-transform hover:scale-105 md:flex-none">
+                <a href="../index.html" class="flex min-w-0 flex-1 items-center transition-transform hover:scale-105 md:flex-none">
                     <img src="img/brand_logo.png" alt="Pristine Touch Logo" class="h-12 w-auto max-h-16 max-w-[min(200px,52vw)] object-contain object-left drop-shadow-md sm:h-16 sm:max-w-[220px]">
                 </a>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex shrink-0 space-x-10 text-[11px] font-bold uppercase tracking-[0.3em] text-white items-center">
-                    <a href="/home" class="hover:text-emerald-400 transition-colors">Home</a>
-                    <a href="/services" class="hover:text-emerald-400 transition-colors">Services</a>
-                    <a href="/inquiry"
+                    <a href="../index.html" class="hover:text-emerald-400 transition-colors">Home</a>
+                    <a href="services.html" class="hover:text-emerald-400 transition-colors">Services</a>
+                    <a href="inquiry.html"
                        class="bg-emerald-800 text-white px-8 py-3 rounded-[3px] text-[10px] tracking-[0.2em] font-black hover:bg-emerald-700 transition-all border border-emerald-600">
                         Contact
                     </a>
@@ -949,9 +949,9 @@
 
         <!-- Mobile Menu Overlay: sibling of nav bar (matches index.html) -->
         <div id="mobile-menu" class="pointer-events-auto fixed inset-0 bg-emerald-950/95 backdrop-blur-sm translate-x-full transition-transform duration-500 z-[100] md:hidden flex flex-col items-center justify-center gap-8 sm:gap-10 px-6 text-center pt-24 pb-12 overflow-y-auto">
-            <a href="/home" class="mobile-link">Home</a>
-            <a href="/services" class="mobile-link">Services</a>
-            <a href="/inquiry" class="mobile-link">Contact</a>
+            <a href="../index.html" class="mobile-link">Home</a>
+            <a href="services.html" class="mobile-link">Services</a>
+            <a href="inquiry.html" class="mobile-link">Contact</a>
         </div>
     </nav>
 
@@ -1017,7 +1017,7 @@
             <h2 class="text-2xl sm:text-3xl font-bold mb-1 text-pristine-green serif-font">Service Inquiry</h2>
             <p class="text-stone-500 mb-6 sm:mb-8 text-xs sm:text-sm leading-relaxed">All fields marked with <span class="text-red-400">*</span> are required. We'll follow up with a tailored quote within 24 hours.</p>
 
-            <form id="inquiry-form" action="#" method="POST" class="space-y-10">
+            <form id="inquiry-form" action="success.html" method="GET" class="space-y-10">
 
                 <!-- SECTION 1: Contact -->
                 <fieldset class="min-w-0">
@@ -1777,14 +1777,14 @@
             const scheduleConfirmed = !document.getElementById('final-schedule-review').classList.contains('hidden');
             if (!scheduleConfirmed) {
                 e.preventDefault();
-                showScheduleError("Please select and confirm your preferred schedule (date and time) before submitting.");
+                showScheduleError("Please select and confirm your preferred schedule (date and time) before submitting.", true);
                 document.getElementById('mini-calendar').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         });
     })();
 
     // ---- SCHEDULE SUMMARY & CONFIRMATION LOGIC ----
-    (function initScheduleSummary() {
+    (function initScheduleSummaryAndFlexible() {
         const timeContainer = document.getElementById('time-slots-container');
         const confirmWrap = document.getElementById('confirm-schedule-wrap');
         const confirmBtn = document.getElementById('confirm-schedule-btn');
@@ -1811,13 +1811,13 @@
 
         function updateSummary() {
             if (!selectedDateStr) {
-                showScheduleError("Please select a date from the calendar first.");
+                showScheduleError("Please select a date from the calendar first.", true);
                 return;
             }
 
             const selected = document.querySelector('input[name="time_slot"]:checked');
             if (selected && selected.value === 'Flexible') {
-                if (checkFlexibleOverlap()) return;
+                if (checkFlexibleOverlap(true)) return;
             }
 
             const timeLabel = getFormattedTime();
@@ -1836,11 +1836,6 @@
         // Show confirm button when time slot is picked
         timeContainer.addEventListener('change', () => {
             if (document.querySelector('input[name="time_slot"][value="Flexible"]:checked')) {
-                if (checkFlexibleOverlap()) {
-                    summaryBox.classList.add('hidden');
-                    confirmWrap.classList.add('hidden');
-                    return;
-                }
             }
             summaryBox.classList.add('hidden'); // Hide summary if they change selection
             confirmWrap.classList.remove('hidden');
@@ -1850,12 +1845,7 @@
         // Also watch flexible time inputs
         [flexibleStart, flexibleEnd].forEach(sel => {
             sel.addEventListener('change', () => {
-                if (document.querySelector('input[name="time_slot"][value="Flexible"]:checked')) {
-                    if (checkFlexibleOverlap()) {
-                        summaryBox.classList.add('hidden');
-                        confirmWrap.classList.add('hidden');
-                        return;
-                    }
+                if (document.querySelector('input[name="time_slot"][value="Flexible"]:checked') && sel.value !== '') { // Only proceed if Flexible is checked and a value is selected
                     summaryBox.classList.add('hidden');
                     confirmWrap.classList.remove('hidden');
                     errorMsg.classList.add('hidden');
@@ -1866,9 +1856,9 @@
         confirmBtn.addEventListener('click', updateSummary);
     })();
 
-    function checkFlexibleOverlap() {
-        const startVal = document.querySelector('select[name="flexible_start_time"]').value;
-        const endVal = document.querySelector('select[name="flexible_end_time"]').value;
+    function checkFlexibleOverlap(showError = false) {
+        const startVal = document.getElementById('flexible_start_input').value;
+        const endVal = document.getElementById('flexible_end_input').value;
         if (!startVal || !selectedDateStr) return false;
 
         const ranges = getMergedBookedRanges(selectedDateStr);
@@ -1882,18 +1872,22 @@
         });
 
         if (hasOverlap) {
-            showScheduleError("The selected time overlaps with an existing booking. Please try another window.");
+            if (showError) {
+                 showScheduleError("The selected time overlaps with an existing booking. Please try another window.");
+            }
             return true;
         }
         return false;
     }
 
-    function showScheduleError(text) {
+    function showScheduleError(text, scroll = false) {
         const err = document.getElementById('schedule-error-msg');
         if (!err) return;
         err.querySelector('p').textContent = text;
         err.classList.remove('hidden');
-        err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (scroll) {
+            err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
     function fmtDateStr(d) {
@@ -1933,7 +1927,7 @@
                 };
             } else {
                 pill.onclick = () => {
-                    showScheduleError("This date is fully booked. Please select an available date (green border).");
+                    showScheduleError("This date is fully booked. Please select an available date (green border).", true);
                 };
             }
             wrap.appendChild(pill);
