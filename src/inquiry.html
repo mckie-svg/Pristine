@@ -1394,35 +1394,15 @@
                     <!-- Time window -->
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-stone-400">Preferred Time Window</label>
-                        <div id="time-slots-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <label class="cursor-pointer group min-w-0">
-                                <input type="radio" name="time_slot" value="Morning" class="peer hidden" required>
-                                <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
-                                    <span class="available-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded tracking-tighter">Available</span>
-                                    <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
-                                    <span class="block text-xl mb-1 slot-icon"></span>
-                                    <span class="block font-bold text-stone-700 text-sm">Morning</span>
-                                    <span class="text-xs text-stone-400">8:00 AM – 12:00 PM</span>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group min-w-0">
-                                <input type="radio" name="time_slot" value="Afternoon" class="peer hidden">
-                                <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all peer-checked:border-pristine-green peer-checked:bg-emerald-50 group-hover:border-emerald-200">
-                                    <span class="available-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded tracking-tighter">Available</span>
-                                    <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
-                                    <span class="block text-xl mb-1 slot-icon"></span>
-                                    <span class="block font-bold text-stone-700 text-sm">Afternoon</span>
-                                    <span class="text-xs text-stone-400">1:00 PM – 5:00 PM</span>
-                                </div>
-                            </label>
+                        <div id="time-slots-container" class="grid grid-cols-1 gap-3">
                             <label class="cursor-pointer group min-w-0">
                                 <input type="radio" name="time_slot" value="Flexible" class="peer hidden">
                                 <div class="relative p-4 sm:p-5 border-2 border-stone-200 rounded-2xl text-center transition-all group-has-[:checked]:border-pristine-green group-has-[:checked]:bg-emerald-50 group-hover:border-emerald-200">
                                     <span class="available-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded tracking-tighter">Available</span>
                                     <span class="booked-badge hidden absolute top-2 right-2 px-1.5 py-0.5 bg-stone-200 text-stone-500 text-[8px] font-black uppercase rounded tracking-tighter">Booked</span>
                                     <span class="block text-xl mb-1 slot-icon"></span>
-                                    <span class="block font-bold text-stone-700 text-sm">Flexible</span>
-                                    <span class="text-xs text-stone-400">Anytime works</span>
+                                    <span class="block font-bold text-stone-700 text-sm">Preferred Time</span>
+                                    <span class="text-xs text-stone-400">Select your hours</span>
 
                                     <!-- Time selector revealed only when Flexible is selected -->
                                     <div class="hidden group-has-[:checked]:block mt-4 pt-4 border-t border-stone-200/60 text-left animate-in fade-in slide-in-from-top-1 duration-200">
@@ -1801,12 +1781,10 @@
             if (selected.value === 'Flexible') {
                 const start = convertTo12Hour(flexibleStart.value);
                 const end = convertTo12Hour(flexibleEnd.value);
-                if (!start) return 'Flexible (Anytime)';
-                return `Flexible: ${start}${end ? ' – ' + end : ' onwards'}`;
+                if (!start) return 'Preferred Time (Anytime)';
+                return `Preferred Time: ${start}${end ? ' – ' + end : ' onwards'}`;
             }
             
-            const labels = { 'Morning': '8:00 AM – 12:00 PM', 'Afternoon': '1:00 PM – 5:00 PM' };
-            return `${selected.value} (${labels[selected.value]})`;
         }
 
         function updateSummary() {
